@@ -22,11 +22,29 @@ class PresentWrapperTest {
         assertThat(result).isEqualTo(expectedOutput);
     }
 
+    @ParameterizedTest
+    @MethodSource("calculateRibbonRequiredTestArgs")
+    void testCalculateRibbonRequired(List<String> input, int expectedOutput) {
+        List<PresentWrapper.Present> presents = parseAsPresentsList(input);
+
+        int result = PresentWrapper.calculateRibbonRequired(presents);
+
+        assertThat(result).isEqualTo(expectedOutput);
+    }
+
     private static Stream<Arguments> calculatePaperRequiredTestArgs() {
         return Stream.of(
                 Arguments.of(List.of("2x3x4"), 58),
                 Arguments.of(List.of("1x1x10"), 43),
                 Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d2/input.txt"), 1598415)
+        );
+    }
+
+    private static Stream<Arguments> calculateRibbonRequiredTestArgs() {
+        return Stream.of(
+                Arguments.of(List.of("2x3x4"), 34),
+                Arguments.of(List.of("1x1x10"), 14),
+                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d2/input.txt"), 3812909)
         );
     }
 
