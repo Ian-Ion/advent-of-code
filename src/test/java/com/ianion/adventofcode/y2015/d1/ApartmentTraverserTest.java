@@ -34,7 +34,7 @@ class ApartmentTraverserTest {
                 Arguments.of("))(", -1),
                 Arguments.of(")))", -3),
                 Arguments.of(")())())", -3),
-                Arguments.of(FileLoader.readFileAsString("src/test/resources/y2015/d1/input.txt"), 138)
+                Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d1/input.txt"), 138)
         );
     }
 
