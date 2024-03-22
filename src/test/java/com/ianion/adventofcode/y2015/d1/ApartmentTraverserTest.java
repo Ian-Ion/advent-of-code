@@ -58,13 +58,8 @@ class ApartmentTraverserTest {
 
     private static List<ApartmentTraverser.Direction> parseAsDirectionsList(String input) {
         return input.chars()
-                .filter(i -> isLegalDirection((char) i))
                 .mapToObj(i -> toDirection((char) i))
                 .toList();
-    }
-
-    public static boolean isLegalDirection(char character) {
-        return Arrays.stream(ApartmentTraverser.Direction.values()).anyMatch(d -> d.character == character);
     }
 
     public static ApartmentTraverser.Direction toDirection(char character) {

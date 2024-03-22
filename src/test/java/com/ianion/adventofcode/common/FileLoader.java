@@ -10,7 +10,7 @@ public class FileLoader {
     public static String readFileAsString(String filename) {
         Path filePath = new File(filename).toPath();
         try {
-            return Files.readString(filePath);
+            return Files.readString(filePath).replaceAll("\\s+", "");
         } catch (IOException e) {
             throw new RuntimeException("Could not read file", e);
         }
