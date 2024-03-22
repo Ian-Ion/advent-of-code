@@ -16,9 +16,9 @@ public class HouseVisitorTest {
     @ParameterizedTest
     @MethodSource("countUniqueHousesVisitedTestArgs")
     void testCountUniqueHousesVisited(String input, int expectedOutput) {
-        List<HouseVisitor.Direction> presents = parseAsDirectionsList(input);
+        List<HouseVisitor.Direction> directions = parseAsDirectionsList(input);
 
-        int result = HouseVisitor.countUniqueHousesVisited(presents);
+        int result = HouseVisitor.countUniqueHousesVisited(directions);
 
         assertThat(result).isEqualTo(expectedOutput);
     }
