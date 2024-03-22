@@ -4,14 +4,6 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    test {
-        resources {
-            srcDir('src/test/resources')
-        }
-    }
-}
-
 dependencies {
     implementation 'org.projectlombok:lombok:1.18.28'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'

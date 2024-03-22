@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ApartmentTraverserTest {
 
     @ParameterizedTest
-    @MethodSource("calculateFloorTests")
+    @MethodSource("calculateFinalFloorTestArgs")
     void testCalculateFinalFloor(String input, int expectedOutput) {
         List<ApartmentTraverser.Direction> directions = parseAsDirectionsList(input);
 
@@ -23,7 +23,17 @@ class ApartmentTraverserTest {
         assertThat(result).isEqualTo(expectedOutput);
     }
 
-    private static Stream<Arguments> calculateFloorTests() {
+    @ParameterizedTest
+    @MethodSource("findIndexWhenBasementEnteredForFirstTimeTestArgs")
+    void testFindIndexWhenBasementEnteredForFirstTime(String input, int expectedOutput) {
+        List<ApartmentTraverser.Direction> directions = parseAsDirectionsList(input);
+
+        int result = ApartmentTraverser.findIndexWhenBasementEnteredForFirstTime(directions);
+
+        assertThat(result).isEqualTo(expectedOutput);
+    }
+
+    private static Stream<Arguments> calculateFinalFloorTestArgs() {
         return Stream.of(
                 Arguments.of("(())", 0),
                 Arguments.of("()()", 0),
@@ -35,6 +45,14 @@ class ApartmentTraverserTest {
                 Arguments.of(")))", -3),
                 Arguments.of(")())())", -3),
                 Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d1/input.txt"), 138)
+        );
+    }
+
+    private static Stream<Arguments> findIndexWhenBasementEnteredForFirstTimeTestArgs() {
+        return Stream.of(
+                Arguments.of(")", 1),
+                Arguments.of("()())", 5),
+                Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d1/input.txt"), 1771)
         );
     }
 
