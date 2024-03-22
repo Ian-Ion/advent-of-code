@@ -33,3 +33,5 @@ gradlew
 gradlew.bat
 
 build/
+
+src/test/resources/inputs/
