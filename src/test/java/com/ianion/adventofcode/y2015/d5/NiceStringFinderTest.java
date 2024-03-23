@@ -13,14 +13,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 class NiceStringFinderTest {
 
     @ParameterizedTest
-    @MethodSource("findNiceStringsTestArgs")
-    void testFindNiceStrings(List<String> input, int expectedOutput) {
-        int result = NiceStringFinder.findNiceStrings(input).size();
+    @MethodSource("findNiceStringsV1TestArgs")
+    void testFindNiceStringsV1(List<String> input, int expectedOutput) {
+        int result = NiceStringFinder.findNiceStringsV1(input).size();
 
         assertThat(result).isEqualTo(expectedOutput);
     }
 
-    private static Stream<Arguments> findNiceStringsTestArgs() {
+    @ParameterizedTest
+    @MethodSource("findNiceStringsV2TestArgs")
+    void testFindNiceStringsV2(List<String> input, int expectedOutput) {
+        int result = NiceStringFinder.findNiceStringsV2(input).size();
+
+        assertThat(result).isEqualTo(expectedOutput);
+    }
+
+    private static Stream<Arguments> findNiceStringsV1TestArgs() {
         return Stream.of(
                 Arguments.of(List.of("ugknbfddgicrmopn"), 1),
                 Arguments.of(List.of("aaa"), 1),
@@ -28,6 +36,16 @@ class NiceStringFinderTest {
                 Arguments.of(List.of("haegwjzuvuyypxyu"), 0),
                 Arguments.of(List.of("dvszwmarrgswjxmb"), 0),
                 Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d5/input.txt"), 258)
+        );
+    }
+
+    private static Stream<Arguments> findNiceStringsV2TestArgs() {
+        return Stream.of(
+                Arguments.of(List.of("qjhvhtzxzqqjkmpb"), 1),
+                Arguments.of(List.of("xxyxx"), 1),
+                Arguments.of(List.of("uurcxstgmygtbstg"), 0),
+                Arguments.of(List.of("ieodomkazucvgmuy"), 0),
+                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d5/input.txt"), 53)
         );
     }
 }

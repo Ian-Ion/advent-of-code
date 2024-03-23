@@ -1,52 +1,53 @@
 package com.ianion.adventofcode.y2015.d5;
 
-import lombok.Builder;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @UtilityClass
 public class NiceStringFinder {
 
-    private static final List<Character> VOWELS = List.of('a', 'e', 'i', 'o', 'u');
-    private static final List<String> ILLEGAL_PATTERNS = List.of("ab", "cd", "pq", "xy");
+    private static final Pattern VOWELS = Pattern.compile("[aeiou]");
+    private static final Pattern REPEATING_LETTER = Pattern.compile("(\\w)\\1+");
+    private static final Pattern REPEATING_PAIR_NON_OVERLAPPING = Pattern.compile("([a-z][a-z])(.)*\\1");
+    private static final Pattern REPEATING_LETTER_WITH_1CHAR_GAP = Pattern.compile("([a-z])(.)\\1");
 
-    private static final List<String> DOUBLE_LETTERS = IntStream.rangeClosed('a', 'z')
-            .mapToObj(i -> String.valueOf((char) i) + (char) i)
+    private static final List<Pattern> ILLEGAL_PATTERNS = Stream
+            .of("[a][b]", "[c][d]", "[p][q]", "[x][y]")
+            .map(Pattern::compile)
             .toList();
 
-    public static List<String> findNiceStrings(List<String> strings) {
+    public static List<String> findNiceStringsV1(List<String> strings) {
         return strings.stream()
-                .map(StringMetadata::from)
-                .filter(m -> !m.containsIllegalPattern() && m.countVowels() >= 3 && m.hasDoubleLetter())
-                .map(m -> m.str)
+                .filter(s -> !containsIllegalPattern(s) && getNumberOfVowels(s) >= 3 && hasRepeatingLetter(s))
                 .toList();
     }
 
-    @Builder
-    public record StringMetadata(
-            String str,
-            List<Character> chars
-    ) {
+    public static List<String> findNiceStringsV2(List<String> strings) {
+        return strings.stream()
+                .filter(s -> hasRepeatingLetterWithOneCharacterGap(s) && hasRepeatingNonOverlappingPair(s))
+                .toList();
+    }
 
-        public static StringMetadata from(String str) {
-            return StringMetadata.builder()
-                    .str(str)
-                    .chars(str.chars().mapToObj(c -> (char) c).toList())
-                    .build();
-        }
+    private static long getNumberOfVowels(String s) {
+        return VOWELS.matcher(s).results().count();
+    }
 
-        public int countVowels() {
-            return (int) chars.stream().filter(VOWELS::contains).count();
-        }
+    private static boolean hasRepeatingLetter(String s) {
+        return REPEATING_LETTER.matcher(s).find();
+    }
 
-        public boolean hasDoubleLetter() {
-            return DOUBLE_LETTERS.stream().anyMatch(str::contains);
-        }
+    private static boolean containsIllegalPattern(String s) {
+        return ILLEGAL_PATTERNS.stream().anyMatch(p -> p.matcher(s).find());
+    }
 
-        public boolean containsIllegalPattern() {
-            return ILLEGAL_PATTERNS.stream().anyMatch(str::contains);
-        }
+    private static boolean hasRepeatingLetterWithOneCharacterGap(String s) {
+        return REPEATING_LETTER_WITH_1CHAR_GAP.matcher(s).find();
+    }
+
+    private static boolean hasRepeatingNonOverlappingPair(String s) {
+        return REPEATING_PAIR_NON_OVERLAPPING.matcher(s).find();
     }
 }
