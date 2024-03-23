@@ -23,12 +23,31 @@ public class HouseVisitorTest {
         assertThat(result).isEqualTo(expectedOutput);
     }
 
+    @ParameterizedTest
+    @MethodSource("countUniqueHousesVisitedByTwoSantasTestArgs")
+    void testCountUniqueHousesVisitedByTwoSantas(String input, int expectedOutput) {
+        List<HouseVisitor.Direction> directions = parseAsDirectionsList(input);
+
+        int result = HouseVisitor.countUniqueHousesVisitedByTwoSantas(directions);
+
+        assertThat(result).isEqualTo(expectedOutput);
+    }
+
     private static Stream<Arguments> countUniqueHousesVisitedTestArgs() {
         return Stream.of(
                 Arguments.of(">", 2),
                 Arguments.of("^>v<", 4),
                 Arguments.of("^v^v^v^v^v", 2),
                 Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d3/input.txt"), 2565)
+        );
+    }
+
+    private static Stream<Arguments> countUniqueHousesVisitedByTwoSantasTestArgs() {
+        return Stream.of(
+                Arguments.of("^v", 3),
+                Arguments.of("^>v<", 3),
+                Arguments.of("^v^v^v^v^v", 11),
+                Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d3/input.txt"), 2639)
         );
     }
 
