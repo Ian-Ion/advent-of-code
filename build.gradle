@@ -8,6 +8,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.30'
     compileOnly 'org.slf4j:slf4j-api:2.0.12'
     implementation 'org.slf4j:slf4j-simple:2.0.12'
+    implementation 'commons-codec:commons-codec:1.16.1'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
