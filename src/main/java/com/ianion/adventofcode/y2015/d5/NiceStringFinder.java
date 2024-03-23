@@ -4,20 +4,15 @@ import lombok.experimental.UtilityClass;
 
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 @UtilityClass
 public class NiceStringFinder {
 
     private static final Pattern VOWELS = Pattern.compile("[aeiou]");
     private static final Pattern REPEATING_LETTER = Pattern.compile("(\\w)\\1+");
+    private static final Pattern ILLEGAL_PATTERNS = Pattern.compile("ab|cd|pq|xy");
     private static final Pattern REPEATING_PAIR_NON_OVERLAPPING = Pattern.compile("([a-z][a-z])(.)*\\1");
     private static final Pattern REPEATING_LETTER_WITH_1CHAR_GAP = Pattern.compile("([a-z])(.)\\1");
-
-    private static final List<Pattern> ILLEGAL_PATTERNS = Stream
-            .of("[a][b]", "[c][d]", "[p][q]", "[x][y]")
-            .map(Pattern::compile)
-            .toList();
 
     public static List<String> findNiceStringsV1(List<String> strings) {
         return strings.stream()
@@ -40,7 +35,7 @@ public class NiceStringFinder {
     }
 
     private static boolean containsIllegalPattern(String s) {
-        return ILLEGAL_PATTERNS.stream().anyMatch(p -> p.matcher(s).find());
+        return ILLEGAL_PATTERNS.matcher(s).find();
     }
 
     private static boolean hasRepeatingLetterWithOneCharacterGap(String s) {
