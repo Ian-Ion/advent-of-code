@@ -1,14 +1,16 @@
 package com.ianion.adventofcode.y2015.d3;
 
+import com.ianion.adventofcode.common.Coordinate;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
 public class HouseVisitor {
@@ -26,8 +28,7 @@ public class HouseVisitor {
         Set<Coordinate> visitedBySanta = visitHouses(santasDirections).visited;
         Set<Coordinate> visitedByRoboSanta = visitHouses(roboSantasDirections).visited;
 
-        return Stream.concat(visitedBySanta.stream(), visitedByRoboSanta.stream())
-                .collect(Collectors.toSet())
+        return Stream.concat(visitedBySanta.stream(), visitedByRoboSanta.stream()).collect(toSet())
                 .size();
     }
 
@@ -82,21 +83,7 @@ public class HouseVisitor {
             return this.toBuilder()
                     .remainingDirections(this.remainingDirections.subList(1, this.remainingDirections.size()))
                     .currentLocation(newLocation)
-                    .visited(Stream.concat(visited.stream(), Stream.of(newLocation)).collect(Collectors.toSet()))
-                    .build();
-        }
-    }
-
-    @Builder(toBuilder = true)
-    public record Coordinate(
-            int x,
-            int y
-    ) {
-
-        public Coordinate add(Coordinate other) {
-            return this.toBuilder()
-                    .x(x + other.x)
-                    .y(y + other.y)
+                    .visited(Stream.concat(visited.stream(), Stream.of(newLocation)).collect(toSet()))
                     .build();
         }
     }

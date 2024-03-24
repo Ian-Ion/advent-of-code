@@ -9,6 +9,7 @@ dependencies {
     compileOnly 'org.slf4j:slf4j-api:2.0.12'
     implementation 'org.slf4j:slf4j-simple:2.0.12'
     implementation 'commons-codec:commons-codec:1.16.1'
+    implementation 'com.google.guava:guava:32.1.3-jre'
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'

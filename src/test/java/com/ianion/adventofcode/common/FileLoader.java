@@ -12,7 +12,7 @@ public class FileLoader {
     public static String readFileAsString(String filename) {
         Path filePath = new File(filename).toPath();
         try {
-            return Files.readString(filePath).replaceAll("\\s+", "");
+            return Files.readString(filePath).replaceAll("\n", "");
         } catch (IOException e) {
             throw new RuntimeException("Could not read file", e);
         }
@@ -22,7 +22,7 @@ public class FileLoader {
         Path filePath = new File(filename).toPath();
         try {
             return Arrays.stream(Files.readString(filePath).split("\n"))
-                    .map(s -> s.replaceAll("\\s+", ""))
+                    .map(s -> s.replaceAll("\n", ""))
                     .toList();
         } catch (IOException e) {
             throw new RuntimeException("Could not read file", e);
