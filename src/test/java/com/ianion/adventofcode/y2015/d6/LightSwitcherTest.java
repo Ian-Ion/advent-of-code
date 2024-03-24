@@ -17,21 +17,39 @@ class LightSwitcherTest {
     private static final Pattern COORDINATES = Pattern.compile("(\\d)*,(\\d)*");
 
     @ParameterizedTest
-    @MethodSource("countSwitchedOnAfterFollowingTestArgs")
-    void testCountSwitchedOnAfterFollowing(List<String> input, int expectedOutput) {
+    @MethodSource("countSwitchedOnAfterFollowingV1InstructionsTestArgs")
+    void testCountSwitchedOnAfterFollowingV1Instructions(List<String> input, int expectedOutput) {
         List<LightSwitcher.SwitchInstruction> instructions = parseAsInstructionsList(input);
 
-        int result = LightSwitcher.countSwitchedOnAfterFollowing(instructions);
+        int result = LightSwitcher.countSwitchedOnAfterFollowingV1Instructions(instructions);
 
         assertThat(result).isEqualTo(expectedOutput);
     }
 
-    private static Stream<Arguments> countSwitchedOnAfterFollowingTestArgs() {
+    @ParameterizedTest
+    @MethodSource("countSwitchedOnAfterFollowingV2InstructionsTestArgs")
+    void testCountSwitchedOnAfterFollowingV2Instructions(List<String> input, int expectedOutput) {
+        List<LightSwitcher.SwitchInstruction> instructions = parseAsInstructionsList(input);
+
+        int result = LightSwitcher.countSwitchedOnAfterFollowingV2Instructions(instructions);
+
+        assertThat(result).isEqualTo(expectedOutput);
+    }
+
+    private static Stream<Arguments> countSwitchedOnAfterFollowingV1InstructionsTestArgs() {
         return Stream.of(
                 Arguments.of(List.of("turn on 0,0 through 999,999"), 1000000),
                 Arguments.of(List.of("toggle 0,0 through 999,0"), 1000),
                 Arguments.of(List.of("turn off 499,499 through 500,500"), 0),
                 Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d6/input.txt"), 543903)
+        );
+    }
+
+    private static Stream<Arguments> countSwitchedOnAfterFollowingV2InstructionsTestArgs() {
+        return Stream.of(
+                Arguments.of(List.of("turn on 0,0 through 0,0"), 1),
+                Arguments.of(List.of("toggle 0,0 through 999,999"), 2000000),
+                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d6/input.txt"), 14687245)
         );
     }
 
