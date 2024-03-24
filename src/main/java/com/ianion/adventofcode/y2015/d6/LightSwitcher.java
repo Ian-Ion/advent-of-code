@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import com.ianion.adventofcode.common.Coordinate;
 import lombok.Builder;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toSet;
 
-@Slf4j
 @UtilityClass
 public class LightSwitcher {
 
@@ -64,7 +62,6 @@ public class LightSwitcher {
         }
 
         public LightSwitchState apply(SwitchInstruction instruction) {
-            log.info("Applying {}", instruction);
             return switch (instruction.behavior()) {
                 case SWITCH_ON -> switchOn(instruction.getAllAffectedSwitches());
                 case SWITCH_OFF -> switchOff(instruction.getAllAffectedSwitches());
