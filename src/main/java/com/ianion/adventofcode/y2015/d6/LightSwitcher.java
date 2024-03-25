@@ -41,14 +41,15 @@ public class LightSwitcher {
     @Builder
     public record SwitchInstruction(
             Behavior behavior,
-            Coordinate.CoordinatePair coordinates
+            Coordinate start,
+            Coordinate end
     ) {
 
         public Set<Coordinate> getAllAffectedSwitches() {
             return IntStream
-                    .rangeClosed(coordinates.first().x(), coordinates.second().x())
+                    .rangeClosed(start.x(), end.x())
                     .mapToObj(x -> IntStream
-                            .rangeClosed(coordinates.first().y(), coordinates.second().y())
+                            .rangeClosed(start.y(), end.y())
                             .mapToObj(y -> Coordinate.builder().x(x).y(y).build()))
                     .flatMap(Function.identity())
                     .collect(toSet());

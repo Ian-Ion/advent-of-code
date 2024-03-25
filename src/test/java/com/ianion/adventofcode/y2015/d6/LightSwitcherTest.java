@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -14,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class LightSwitcherTest {
 
-    private static final Pattern COORDINATES = Pattern.compile("(\\d)*,(\\d)*");
+    private static final Pattern COMMAND = Pattern.compile("(turn on|turn off|toggle) (\\d+),(\\d+) through (\\d+),(\\d+)");
 
     @ParameterizedTest
     @MethodSource("countSwitchedOnAfterFollowingV1InstructionsTestArgs")
@@ -55,38 +56,31 @@ class LightSwitcherTest {
 
     private List<LightSwitcher.SwitchInstruction> parseAsInstructionsList(List<String> input) {
         return input.stream()
-                .map(s -> LightSwitcher.SwitchInstruction.builder()
-                        .behavior(parseBehaviour(s))
-                        .coordinates(parseCoordinates(s))
-                        .build())
+                .map(s -> {
+                    Matcher m = COMMAND.matcher(s);
+                    m.find();
+                    return LightSwitcher.SwitchInstruction.builder()
+                            .behavior(parseBehavior(m.group(1)))
+                            .start(
+                                    Coordinate.builder()
+                                            .x(Integer.parseInt(m.group(2)))
+                                            .y(Integer.parseInt(m.group(3)))
+                                            .build())
+                            .end(
+                                    Coordinate.builder()
+                                            .x(Integer.parseInt(m.group(4)))
+                                            .y(Integer.parseInt(m.group(5)))
+                                            .build())
+                            .build();
+                })
                 .toList();
     }
 
-    private LightSwitcher.Behavior parseBehaviour(String s) {
-        return s.startsWith("turn on")
+    private LightSwitcher.Behavior parseBehavior(String s) {
+        return s.equals("turn on")
                 ? LightSwitcher.Behavior.SWITCH_ON
-                : s.startsWith("turn off")
+                : s.equals("turn off")
                 ? LightSwitcher.Behavior.SWITCH_OFF
                 : LightSwitcher.Behavior.TOGGLE;
-    }
-
-    private static Coordinate.CoordinatePair parseCoordinates(String s) {
-        List<Coordinate> coordinates = COORDINATES.matcher(s).results()
-                .map(match -> s.substring(match.start(), match.end()))
-                .map(LightSwitcherTest::parseCoordinate)
-                .toList();
-
-        return Coordinate.CoordinatePair.builder()
-                .first(coordinates.get(0))
-                .second(coordinates.get(1))
-                .build();
-    }
-
-    private static Coordinate parseCoordinate(String cString) {
-        String[] coordinateStrings = cString.split(",");
-        return Coordinate.builder()
-                .x(Integer.parseInt(coordinateStrings[0]))
-                .y(Integer.parseInt(coordinateStrings[1]))
-                .build();
     }
 }

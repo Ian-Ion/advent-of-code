@@ -14,10 +14,4 @@ public record Coordinate(
                 .y(y + other.y)
                 .build();
     }
-
-    @Builder(toBuilder = true)
-    public record CoordinatePair(
-            Coordinate first,
-            Coordinate second
-    ) {}
 }
