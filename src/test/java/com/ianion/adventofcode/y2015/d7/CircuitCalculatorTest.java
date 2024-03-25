@@ -1,9 +1,7 @@
 package com.ianion.adventofcode.y2015.d7;
 
 import com.ianion.adventofcode.common.FileLoader;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
@@ -24,45 +22,64 @@ class CircuitCalculatorTest {
     private static final Pattern RSHIFT_GATE = Pattern.compile("(\\w+) RSHIFT (\\d+) -> (\\w+)");
     private static final Pattern COMPLEMENT_GATE = Pattern.compile("NOT (\\w+) -> (\\w+)");
 
-    @ParameterizedTest
-    @MethodSource("assembleAndRunTestArgs")
-    void testAssembleAndRun(List<String> input, Map<String, Integer> expectedGateValues) {
-        List<LogicGate> gates = parseAsGatesList(input);
+    public static final List<String> TEST_INPUT = List.of(
+            "123 -> x",
+            "456 -> y",
+            "x AND y -> d",
+            "x OR y -> e",
+            "x LSHIFT 2 -> f",
+            "y RSHIFT 2 -> g",
+            "NOT x -> h",
+            "NOT y -> i");
+
+    private static final Map<String, Integer> TEST_EXPECTED_OUTPUT = Map.of(
+            "d", 72,
+            "e", 507,
+            "f", 492,
+            "g", 114,
+            "h", 65412,
+            "i", 65079,
+            "x", 123,
+            "y", 456
+    );
+
+    private static final Wire WIRE_A = Wire.from("a");
+    private static final Wire WIRE_B = Wire.from("b");
+
+    @Test
+    void testAssembleAndRun() {
+        List<LogicGate> gates = parseAsGatesList(TEST_INPUT);
 
         CircuitCalculator.Circuit result = CircuitCalculator.assembleAndRun(gates);
 
-        expectedGateValues.forEach(
+        TEST_EXPECTED_OUTPUT.forEach(
                 (key, value) -> assertThat(result.getSignal(Wire.from(key))).isEqualTo(value));
     }
 
-    private static Stream<Arguments> assembleAndRunTestArgs() {
-        return Stream.of(
-                Arguments.of(
-                        List.of(
-                                "123 -> x",
-                                "456 -> y",
-                                "x AND y -> d",
-                                "x OR y -> e",
-                                "x LSHIFT 2 -> f",
-                                "y RSHIFT 2 -> g",
-                                "NOT x -> h",
-                                "NOT y -> i"),
-                        Map.of(
-                                "d", 72,
-                                "e", 507,
-                                "f", 492,
-                                "g", 114,
-                                "h", 65412,
-                                "i", 65079,
-                                "x", 123,
-                                "y", 456
-                        )),
-                Arguments.of(
-                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d7/input.txt"),
-                        Map.of(
-                                "a", 956
-                        ))
-        );
+    @Test
+    void testAssembleAndRunChallengePart1() {
+        List<LogicGate> gates = readChallengeInput();
+
+        CircuitCalculator.Circuit result = CircuitCalculator.assembleAndRun(gates);
+
+        assertThat(result.getSignal(WIRE_A)).isEqualTo(956);
+    }
+
+    @Test
+    void testAssembleAndRunChallengePart2() {
+        List<LogicGate> gates = readChallengeInput();
+
+        CircuitCalculator.Circuit firstPass = CircuitCalculator
+                .assembleAndRun(gates);
+        CircuitCalculator.Circuit secondPass = CircuitCalculator
+                .assembleAndRun(overrideWireBInputWithWireAOutput(gates, firstPass));
+
+        assertThat(secondPass.getSignal(WIRE_A)).isEqualTo(40149);
+    }
+
+    private List<LogicGate> readChallengeInput() {
+        List<String> input = FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d7/input.txt");
+        return parseAsGatesList(input);
     }
 
     private List<LogicGate> parseAsGatesList(List<String> input) {
@@ -156,5 +173,13 @@ class CircuitCalculatorTest {
                 .input(Wire.from(inputMatcher.group(1)))
                 .output(Wire.from(inputMatcher.group(2)))
                 .build();
+    }
+
+    private static List<LogicGate> overrideWireBInputWithWireAOutput(List<LogicGate> gates, CircuitCalculator.Circuit firstPass) {
+        return Stream
+                .concat(
+                        gates.stream().filter(gate -> !gate.getOutput().equals(WIRE_B)),
+                        Stream.of(InputSignal.builder().output(WIRE_B).amount(firstPass.getSignal(WIRE_A)).build()))
+                .toList();
     }
 }
