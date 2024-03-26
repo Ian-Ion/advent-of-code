@@ -77,12 +77,12 @@ class CircuitCalculatorTest {
         assertThat(secondPass.getSignal(WIRE_A)).isEqualTo(40149);
     }
 
-    private List<LogicGate> readChallengeInput() {
+    private static List<LogicGate> readChallengeInput() {
         List<String> input = FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d7/input.txt");
         return parseAsGatesList(input);
     }
 
-    private List<LogicGate> parseAsGatesList(List<String> input) {
+    private static List<LogicGate> parseAsGatesList(List<String> input) {
         return input.stream().map(i -> {
             Matcher andValueMatcher = AND_VALUE_GATE.matcher(i);
             Matcher andMatcher = AND_WIRE_GATE.matcher(i);
@@ -114,7 +114,7 @@ class CircuitCalculatorTest {
         }).toList();
     }
 
-    private AndValueGate createAndValueGate(Matcher m) {
+    private static AndValueGate createAndValueGate(Matcher m) {
         return AndValueGate.builder()
                 .amount(Integer.parseInt(m.group(1)))
                 .input(Wire.from(m.group(2)))

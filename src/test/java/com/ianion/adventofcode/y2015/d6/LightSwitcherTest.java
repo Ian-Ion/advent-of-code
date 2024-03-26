@@ -54,7 +54,7 @@ class LightSwitcherTest {
         );
     }
 
-    private List<LightSwitcher.SwitchInstruction> parseAsInstructionsList(List<String> input) {
+    private static List<LightSwitcher.SwitchInstruction> parseAsInstructionsList(List<String> input) {
         return input.stream()
                 .map(s -> {
                     Matcher m = COMMAND.matcher(s);
@@ -76,7 +76,7 @@ class LightSwitcherTest {
                 .toList();
     }
 
-    private LightSwitcher.Behavior parseBehavior(String s) {
+    private static LightSwitcher.Behavior parseBehavior(String s) {
         return s.equals("turn on")
                 ? LightSwitcher.Behavior.SWITCH_ON
                 : s.equals("turn off")
