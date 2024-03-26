@@ -47,25 +47,25 @@ public class HouseVisitor {
                 .toList();
     }
 
-    private static VisitingState visitHouses(List<Direction> directions) {
+    private static Santa visitHouses(List<Direction> directions) {
         return Stream
                 .iterate(
-                        VisitingState.begin(directions),
-                        VisitingState::hasMoreDirections,
-                        VisitingState::followNextDirection)
-                .reduce(VisitingState.begin(directions), (first, second) -> second)
+                        Santa.initialize(directions),
+                        Santa::hasMoreDirections,
+                        Santa::followNextDirection)
+                .reduce(Santa.initialize(directions), (first, second) -> second)
                 .followNextDirection();
     }
 
     @Builder(toBuilder = true)
-    private record VisitingState(
+    private record Santa(
             Coordinate currentLocation,
             List<Direction> remainingDirections,
             Set<Coordinate> visited
     ) {
 
-        public static VisitingState begin(List<Direction> directions) {
-            return VisitingState.builder()
+        public static Santa initialize(List<Direction> directions) {
+            return Santa.builder()
                     .currentLocation(STARTING_LOCATION)
                     .remainingDirections(directions)
                     .visited(Set.of(STARTING_LOCATION))
@@ -76,7 +76,7 @@ public class HouseVisitor {
             return !remainingDirections.isEmpty();
         }
 
-        public VisitingState followNextDirection() {
+        public Santa followNextDirection() {
             HouseVisitor.Direction nextDirection = this.remainingDirections.get(0);
             Coordinate newLocation = this.currentLocation.add(nextDirection.positionDelta);
 

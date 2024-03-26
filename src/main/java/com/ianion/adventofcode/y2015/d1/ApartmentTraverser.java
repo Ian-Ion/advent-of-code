@@ -20,10 +20,10 @@ public class ApartmentTraverser {
     public static int findIndexWhenBasementEnteredForFirstTime(List<Direction> directions) {
         return Stream
                 .iterate(
-                        TraverserState.begin(directions),
-                        TraverserState::isNotFinishedOrEnteredBasement,
-                        TraverserState::followNextDirection)
-                .reduce(TraverserState.begin(directions), (first, second) -> second)
+                        Santa.initialize(directions),
+                        Santa::isNotFinishedOrEnteredBasement,
+                        Santa::followNextDirection)
+                .reduce(Santa.initialize(directions), (first, second) -> second)
                 .followNextDirection()
                 .directionsFollowed;
     }
@@ -38,14 +38,14 @@ public class ApartmentTraverser {
     }
 
     @Builder(toBuilder = true)
-    private record TraverserState(
+    private record Santa(
             List<Direction> remainingDirections,
             int directionsFollowed,
             int currentFloor
     ) {
 
-        public static TraverserState begin(List<Direction> directions) {
-            return TraverserState.builder()
+        public static Santa initialize(List<Direction> directions) {
+            return Santa.builder()
                     .remainingDirections(directions)
                     .directionsFollowed(0)
                     .currentFloor(0)
@@ -56,7 +56,7 @@ public class ApartmentTraverser {
             return currentFloor >= 0 && !remainingDirections.isEmpty();
         }
 
-        public TraverserState followNextDirection() {
+        public Santa followNextDirection() {
             Direction nextDirection = this.remainingDirections.get(0);
 
             return this.toBuilder()
