@@ -30,7 +30,7 @@ class SantasListTest {
                         "\"aaa\\\"aaa\"",
                         "\"\\x27\""
                 ), 12),
-                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d8/input.txt"), 0)
+                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d8/input.txt"), 1350)
         );
     }
 
