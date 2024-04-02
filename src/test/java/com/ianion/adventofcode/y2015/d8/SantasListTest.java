@@ -13,16 +13,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SantasListTest {
 
     @ParameterizedTest
-    @MethodSource("sumDifferenceOfListItemLiteralAndValueLengthTestArgs")
-    void testSumDifferenceOfListItemLiteralAndValueLength(List<String> input, int expectedOutput) {
+    @MethodSource("countExtraCharactersUsedToEncodeTestArgs")
+    void testCountExtraCharactersUsedToEncode(List<String> input, int expectedOutput) {
         SantasList santasList = SantasList.builder().listItems(parseAsListItems(input)).build();
 
-        int result = santasList.sumDifferenceBetweenListItemLiteralAndInMemoryLengths();
+        int result = santasList.countExtraCharactersUsedToEncode();
 
         assertThat(result).isEqualTo(expectedOutput);
     }
 
-    private static Stream<Arguments> sumDifferenceOfListItemLiteralAndValueLengthTestArgs() {
+    @ParameterizedTest
+    @MethodSource("countExtraCharactersRequiredToEncodeTestArgs")
+    void testCountExtraCharactersRequiredToEncode(List<String> input, int expectedOutput) {
+        SantasList santasList = SantasList.builder().listItems(parseAsListItems(input)).build();
+
+        int result = santasList.countExtraCharactersRequiredToEncode();
+
+        assertThat(result).isEqualTo(expectedOutput);
+    }
+
+    private static Stream<Arguments> countExtraCharactersUsedToEncodeTestArgs() {
         return Stream.of(
                 Arguments.of(List.of(
                         "\"\"",
@@ -31,6 +41,18 @@ class SantasListTest {
                         "\"\\x27\""
                 ), 12),
                 Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d8/input.txt"), 1350)
+        );
+    }
+
+    private static Stream<Arguments> countExtraCharactersRequiredToEncodeTestArgs() {
+        return Stream.of(
+                Arguments.of(List.of(
+                        "\"\"",
+                        "\"abc\"",
+                        "\"aaa\\\"aaa\"",
+                        "\"\\x27\""
+                ), 19),
+                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d8/input.txt"), 2085)
         );
     }
 
