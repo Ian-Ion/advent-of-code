@@ -30,6 +30,16 @@ class SantaRouterTest {
         assertThat(result).isEqualTo(expectedOutput);
     }
 
+    @ParameterizedTest
+    @MethodSource("findLongestDistanceThatVisitsAllTestArgs")
+    void testFindLongestDistanceThatVisitsAll(List<String> input, int expectedOutput) {
+        Location.Connections locations = parseAsConnectedLocations(input);
+
+        int result = Santa.findLongestDistanceThatVisitsAll(locations);
+
+        assertThat(result).isEqualTo(expectedOutput);
+    }
+
     private static Stream<Arguments> findShortestDistanceThatVisitsAllTestArgs() {
         return Stream.of(
                 Arguments.of(List.of(
@@ -37,6 +47,17 @@ class SantaRouterTest {
                         "London to Belfast = 518",
                         "Dublin to Belfast = 141"
                 ), 605),
+                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d9/input.txt"), 141)
+        );
+    }
+
+    private static Stream<Arguments> findLongestDistanceThatVisitsAllTestArgs() {
+        return Stream.of(
+                Arguments.of(List.of(
+                        "London to Dublin = 464",
+                        "London to Belfast = 518",
+                        "Dublin to Belfast = 141"
+                ), 982),
                 Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d9/input.txt"), 141)
         );
     }

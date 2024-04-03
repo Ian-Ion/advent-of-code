@@ -17,9 +17,18 @@ public record Santa(
     private static final BinaryOperator<Santa> SANTA_WITH_SMALLEST_DISTANCE_TRAVELLED =
             (a, b) -> a.route.totalDistance() < b.route.totalDistance() ? a : b;
 
+    private static final BinaryOperator<Santa> SANTA_WITH_LONGEST_DISTANCE_TRAVELLED =
+            (a, b) -> a.route.totalDistance() > b.route.totalDistance() ? a : b;
+
     public static int findShortestDistanceThatVisitsAll(Location.Connections connectedLocations) {
         return Santa.initialize(connectedLocations)
                 .visitUnvisitedInShortestPossibleDistance()
+                .getTotalDistanceTravelled();
+    }
+
+    public static int findLongestDistanceThatVisitsAll(Location.Connections connectedLocations) {
+        return Santa.initialize(connectedLocations)
+                .visitUnvisitedInLongestPossibleDistance()
                 .getTotalDistanceTravelled();
     }
 
@@ -37,6 +46,15 @@ public record Santa(
                 .map(Santa::visitUnvisitedInShortestPossibleDistance)
                 .filter(Santa::isFinished)
                 .reduce(SANTA_WITH_SMALLEST_DISTANCE_TRAVELLED)
+                .orElse(this);
+    }
+
+    public Santa visitUnvisitedInLongestPossibleDistance() {
+        return isFinished() ? this : unvisited.stream()
+                .map(this::visit)
+                .map(Santa::visitUnvisitedInLongestPossibleDistance)
+                .filter(Santa::isFinished)
+                .reduce(SANTA_WITH_LONGEST_DISTANCE_TRAVELLED)
                 .orElse(this);
     }
 
