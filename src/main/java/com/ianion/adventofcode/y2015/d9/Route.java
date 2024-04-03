@@ -8,27 +8,27 @@ import java.util.stream.Stream;
 
 @Builder(toBuilder = true)
 public record Route(
-        List<Location> locations,
+        List<Location> path,
         int totalDistance
 ) {
 
     public static Route empty() {
         return Route.builder()
-                .locations(List.of())
+                .path(List.of())
                 .totalDistance(0)
                 .build();
     }
 
-    public Route visit(Location location, int distance) {
+    public Route append(Location location, int distance) {
         return this.toBuilder()
-                .locations(Stream.concat(locations.stream(), Stream.of(location)).toList())
+                .path(Stream.concat(path.stream(), Stream.of(location)).toList())
                 .totalDistance(totalDistance + distance)
                 .build();
     }
 
-    public Optional<Location> getCurrentLocation() {
-        return !locations.isEmpty()
-                ? Optional.of(locations.get(locations.size() - 1))
+    public Optional<Location> getEndOfRoute() {
+        return !path.isEmpty()
+                ? Optional.of(path.get(path.size() - 1))
                 : Optional.empty();
     }
 }

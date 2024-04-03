@@ -45,14 +45,14 @@ public record Santa(
     }
 
     private Santa visit(Location nextLocation) {
-        Integer distanceFromCurrent = route.getCurrentLocation()
+        Integer distanceFromCurrent = route.getEndOfRoute()
                 .map(currentLocation -> distanceBetweenLocations.get(
                         Location.Pair.from(currentLocation, nextLocation)))
                 .orElse(0);
 
         return this.toBuilder()
                 .unvisited(unvisited.stream().filter(u -> !u.equals(nextLocation)).collect(Collectors.toSet()))
-                .route(route.visit(nextLocation, distanceFromCurrent))
+                .route(route.append(nextLocation, distanceFromCurrent))
                 .build();
     }
 
