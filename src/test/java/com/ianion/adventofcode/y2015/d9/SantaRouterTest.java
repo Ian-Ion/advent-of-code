@@ -5,9 +5,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -22,9 +23,9 @@ class SantaRouterTest {
     @ParameterizedTest
     @MethodSource("findShortestDistanceThatVisitsAllTestArgs")
     void testFindShortestDistanceThatVisitsAll(List<String> input, int expectedOutput) {
-        SantaRouter.Places places = parceAsPlaces(input);
+        Location.Connections locations = parseAsConnectedLocations(input);
 
-        int result = SantaRouter.findShortestDistanceThatVisitsAll(places);
+        int result = Santa.findShortestDistanceThatVisitsAll(locations);
 
         assertThat(result).isEqualTo(expectedOutput);
     }
@@ -36,35 +37,32 @@ class SantaRouterTest {
                         "London to Belfast = 518",
                         "Dublin to Belfast = 141"
                 ), 605),
-                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d9/input.txt"), 0)
+                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d9/input.txt"), 141)
         );
     }
 
-    private static SantaRouter.Places parceAsPlaces(List<String> input) {
-        Set<SantaRouter.LocationConnection> locationConnections = input.stream()
+    private static Location.Connections parseAsConnectedLocations(List<String> input) {
+        Map<Location.Pair, Integer> distancesBetweenLocations = input.stream()
                 .map(i -> {
                     Matcher matcher = DISTANCE.matcher(i);
 
                     return matcher.find()
                             ? Optional.of(parseLocationConnection(matcher))
-                            : Optional.<SantaRouter.LocationConnection>empty();
+                            : Optional.<Map.Entry<Location.Pair, Integer>>empty();
                 })
                 .flatMap(Optional::stream)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return SantaRouter.Places.builder()
-                .locationsConnections(locationConnections)
+        return Location.Connections.builder()
+                .distanceBetweenLocations(distancesBetweenLocations)
                 .build();
     }
 
-    private static SantaRouter.LocationConnection parseLocationConnection(Matcher m) {
-        return SantaRouter.LocationConnection.builder()
-                .locations(
-                        SantaRouter.LocationPair.builder()
-                                .first(SantaRouter.Location.builder().name(m.group(1)).build())
-                                .second(SantaRouter.Location.builder().name(m.group(2)).build())
-                                .build())
-                .distance(Integer.parseInt(m.group(3)))
-                .build();
+    private static Map.Entry<Location.Pair, Integer> parseLocationConnection(Matcher m) {
+        return new AbstractMap.SimpleEntry<>(
+                Location.Pair.from(
+                        Location.builder().name(m.group(1)).build(),
+                        Location.builder().name(m.group(2)).build()),
+                Integer.parseInt(m.group(3)));
     }
 }
