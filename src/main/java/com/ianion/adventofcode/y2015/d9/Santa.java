@@ -14,10 +14,10 @@ public record Santa(
         Route route
 ) {
 
-    private static final BinaryOperator<Santa> SANTA_WITH_SHORTEST_DISTANCE_TRAVELLED =
+    private static final BinaryOperator<Santa> LEAST_DISTANCE_TRAVELLED =
             (a, b) -> a.route.totalDistance() < b.route.totalDistance() ? a : b;
 
-    private static final BinaryOperator<Santa> SANTA_WITH_LONGEST_DISTANCE_TRAVELLED =
+    private static final BinaryOperator<Santa> MOST_DISTANCE_TRAVELLED =
             (a, b) -> a.route.totalDistance() > b.route.totalDistance() ? a : b;
 
     public static int findShortestDistanceThatVisitsAll(Location.Connections connectedLocations) {
@@ -41,11 +41,11 @@ public record Santa(
     }
 
     public Santa visitAllUnvisitedLocationsAsQuicklyAsPossible() {
-        return travelOptimumRouteForUnvisitedLocations(SANTA_WITH_SHORTEST_DISTANCE_TRAVELLED);
+        return travelOptimumRouteForUnvisitedLocations(LEAST_DISTANCE_TRAVELLED);
     }
 
     public Santa visitAllUnvisitedLocationsAsSlowlyAsPossible() {
-        return travelOptimumRouteForUnvisitedLocations(SANTA_WITH_LONGEST_DISTANCE_TRAVELLED);
+        return travelOptimumRouteForUnvisitedLocations(MOST_DISTANCE_TRAVELLED);
     }
 
     private Santa travelOptimumRouteForUnvisitedLocations(BinaryOperator<Santa> optimumComparator) {
