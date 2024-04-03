@@ -58,7 +58,7 @@ class SantaRouterTest {
                         "London to Belfast = 518",
                         "Dublin to Belfast = 141"
                 ), 982),
-                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d9/input.txt"), 141)
+                Arguments.of(FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d9/input.txt"), 736)
         );
     }
 

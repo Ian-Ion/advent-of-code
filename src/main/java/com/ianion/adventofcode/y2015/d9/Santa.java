@@ -14,7 +14,7 @@ public record Santa(
         Route route
 ) {
 
-    private static final BinaryOperator<Santa> SANTA_WITH_SMALLEST_DISTANCE_TRAVELLED =
+    private static final BinaryOperator<Santa> SANTA_WITH_SHORTEST_DISTANCE_TRAVELLED =
             (a, b) -> a.route.totalDistance() < b.route.totalDistance() ? a : b;
 
     private static final BinaryOperator<Santa> SANTA_WITH_LONGEST_DISTANCE_TRAVELLED =
@@ -22,13 +22,13 @@ public record Santa(
 
     public static int findShortestDistanceThatVisitsAll(Location.Connections connectedLocations) {
         return Santa.initialize(connectedLocations)
-                .visitUnvisitedInShortestPossibleDistance()
+                .visitAllUnvisitedLocationsAsQuicklyAsPossible()
                 .getTotalDistanceTravelled();
     }
 
     public static int findLongestDistanceThatVisitsAll(Location.Connections connectedLocations) {
         return Santa.initialize(connectedLocations)
-                .visitUnvisitedInLongestPossibleDistance()
+                .visitAllUnvisitedLocationsAsSlowlyAsPossible()
                 .getTotalDistanceTravelled();
     }
 
@@ -40,21 +40,20 @@ public record Santa(
                 .build();
     }
 
-    public Santa visitUnvisitedInShortestPossibleDistance() {
-        return isFinished() ? this : unvisited.stream()
-                .map(this::visit)
-                .map(Santa::visitUnvisitedInShortestPossibleDistance)
-                .filter(Santa::isFinished)
-                .reduce(SANTA_WITH_SMALLEST_DISTANCE_TRAVELLED)
-                .orElse(this);
+    public Santa visitAllUnvisitedLocationsAsQuicklyAsPossible() {
+        return travelOptimumRouteForUnvisitedLocations(SANTA_WITH_SHORTEST_DISTANCE_TRAVELLED);
     }
 
-    public Santa visitUnvisitedInLongestPossibleDistance() {
+    public Santa visitAllUnvisitedLocationsAsSlowlyAsPossible() {
+        return travelOptimumRouteForUnvisitedLocations(SANTA_WITH_LONGEST_DISTANCE_TRAVELLED);
+    }
+
+    private Santa travelOptimumRouteForUnvisitedLocations(BinaryOperator<Santa> optimumComparator) {
         return isFinished() ? this : unvisited.stream()
                 .map(this::visit)
-                .map(Santa::visitUnvisitedInLongestPossibleDistance)
+                .map(futureSanta -> futureSanta.travelOptimumRouteForUnvisitedLocations(optimumComparator))
                 .filter(Santa::isFinished)
-                .reduce(SANTA_WITH_LONGEST_DISTANCE_TRAVELLED)
+                .reduce(optimumComparator)
                 .orElse(this);
     }
 
