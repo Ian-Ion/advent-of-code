@@ -10,13 +10,14 @@ import java.util.stream.Stream;
 @Slf4j
 @Builder(toBuilder = true)
 public record LookAndSay(
-        String sequence
+        String sequence,
+        int roundsRemaining
 ) {
 
     private static final Pattern CONSECUTIVE_DIGITS = Pattern.compile("(\\d)\\1*");
 
-    public static LookAndSay play(Game game) {
-        return LookAndSay.initialize(game.sequence).playMoreRounds(game.rounds);
+    public static LookAndSay play(String startingSequence, int roundsToPlay) {
+        return LookAndSay.initialize(startingSequence).playMoreRounds(roundsToPlay);
     }
 
     private static LookAndSay initialize(String sequence) {
@@ -26,8 +27,20 @@ public record LookAndSay(
     }
 
     private LookAndSay playMoreRounds(int rounds) {
-        return rounds == 0 ? this
-                : playOneRound().playMoreRounds(rounds - 1);
+        return Stream
+                .iterate(
+                        withNumberOfRoundsToPlay(rounds),
+                        LookAndSay::hasRoundsRemaining,
+                        LookAndSay::playOneRound)
+                .reduce(this, (first, second) -> second);
+    }
+
+    private LookAndSay withNumberOfRoundsToPlay(int rounds) {
+        return this.toBuilder().roundsRemaining(rounds).build();
+    }
+
+    private boolean hasRoundsRemaining() {
+        return roundsRemaining >= 0;
     }
 
     private LookAndSay playOneRound() {
@@ -36,7 +49,10 @@ public record LookAndSay(
                 ? generateNextSequence(currentSequenceMatcher.reset())
                 : sequence;
 
-        return this.toBuilder().sequence(nextSequence).build();
+        return this.toBuilder()
+                .sequence(nextSequence)
+                .roundsRemaining(roundsRemaining - 1)
+                .build();
     }
 
     private String generateNextSequence(Matcher currentSequenceMatcher) {
@@ -48,12 +64,6 @@ public record LookAndSay(
                 .reduce((first, second) -> second)
                 .map(NextSequenceBuilder::getNextSequence).orElse("");
     }
-
-    @Builder
-    public record Game(
-            String sequence,
-            int rounds
-    ) {}
 
     @Builder(toBuilder = true)
     private record NextSequenceBuilder(

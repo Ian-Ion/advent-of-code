@@ -13,10 +13,8 @@ class LookAndSayTest {
 
     @ParameterizedTest
     @MethodSource("playTestArgs")
-    void testPlay(String input, int rounds, int expectedFinalSequenceLength) {
-        LookAndSay.Game game = LookAndSay.Game.builder().sequence(input).rounds(rounds).build();
-
-        LookAndSay result = LookAndSay.play(game);
+    void testPlay(String startingSequence, int roundsToPlay, int expectedFinalSequenceLength) {
+        LookAndSay result = LookAndSay.play(startingSequence, roundsToPlay);
 
         assertThat(result.sequence()).hasSize(expectedFinalSequenceLength);
     }
