@@ -1,6 +1,7 @@
 package com.ianion.adventofcode.y2015.d11;
 
 import com.ianion.adventofcode.common.FileLoader;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -25,6 +26,16 @@ class PasswordTest {
         Password nextValidPassword = Password.of(currentPassword).getNextValidPassword();
 
         assertThat(nextValidPassword.value()).isEqualTo(expectedNextValidPassword);
+    }
+
+    @Test
+    void testGetNextValidPasswordTwice() {
+        Password result = Password
+                .of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d11/input.txt"))
+                .getNextValidPassword()
+                .getNextValidPassword();
+
+        assertThat(result.value()).isEqualTo("cqkaabcc");
     }
 
     private static Stream<Arguments> isInvalidTestArgs() {

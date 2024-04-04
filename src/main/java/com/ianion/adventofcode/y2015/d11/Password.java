@@ -30,8 +30,8 @@ public record Password(
 
     public Password getNextValidPassword() {
         return Stream
-                .iterate(this, Password::isInvalid, Password::increment)
-                .reduce(this, (first, second) -> second.increment());
+                .iterate(increment(), Password::isInvalid, Password::increment)
+                .reduce(increment(), (first, second) -> second.increment());
     }
 
     public boolean isInvalid() {
