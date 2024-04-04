@@ -26,7 +26,8 @@ class LookAndSayTest {
                 Arguments.of("1", 3, 4),
                 Arguments.of("1", 4, 6),
                 Arguments.of("1", 5, 6),
-                Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d10/input.txt"), 40, 329356)
+                Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d10/input.txt"), 40, 329356),
+                Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d10/input.txt"), 50, 4666278)
         );
     }
 }
