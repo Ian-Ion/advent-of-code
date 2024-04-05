@@ -20,17 +20,31 @@ public record Accounts(
     }
 
     public int sumOfAllNumbers() {
-        return AccountsCalculator.initialize(json).sumOfAllNumbers().result;
+        return AccountsCalculator.initialize(json)
+                .sumOfAllNumbers()
+                .result();
+    }
+
+    public int sumOfAllNumbersIgnoringRedObjects() {
+        return AccountsCalculator.initialize(json)
+                .ignoreRedObjects(true)
+                .sumOfAllNumbers()
+                .result();
     }
 
     @Builder(toBuilder = true)
     public record AccountsCalculator(
             JsonElement json,
-            int result
+            int result,
+            boolean ignoreRedObjects
     ) {
 
-        public static AccountsCalculator initialize(JsonElement root) {
+        private static AccountsCalculator initialize(JsonElement root) {
             return AccountsCalculator.builder().json(root).result(0).build();
+        }
+
+        private AccountsCalculator ignoreRedObjects(boolean ignoreRedObjects) {
+            return this.toBuilder().ignoreRedObjects(ignoreRedObjects).build();
         }
 
         private AccountsCalculator sumOfAllNumbers() {
@@ -42,7 +56,7 @@ public record Accounts(
         private AccountsCalculator addSumOfChildElementsToResult(JsonElement json) {
             return json.isJsonArray()
                     ? withResult(sumChildElements(json.getAsJsonArray().asList()))
-                    : withResult(sumChildElements(json.getAsJsonObject().asMap().values()));
+                    : withResult(sumChildElements(json.getAsJsonObject().asMap().values(), ignoreRedObjects));
         }
 
         private AccountsCalculator addToResult(JsonPrimitive primitive) {
@@ -53,10 +67,23 @@ public record Accounts(
             return this.toBuilder().result(res).build();
         }
 
-        private static Integer sumChildElements(Collection<JsonElement> json) {
+        private Integer sumChildElements(Collection<JsonElement> json, boolean ignoreAnythingRed) {
+            return ignoreAnythingRed && anyElementIsRed(json) ? 0 : sumChildElements(json);
+        }
+
+        private static boolean anyElementIsRed(Collection<JsonElement> json) {
+            return json.stream().anyMatch(e -> e.isJsonPrimitive()
+                    && e.getAsJsonPrimitive().isString()
+                    && e.getAsJsonPrimitive().getAsString().equals("red"));
+        }
+
+        private Integer sumChildElements(Collection<JsonElement> json) {
             return json.stream().reduce(
                     0,
-                    (acc, next) -> acc + AccountsCalculator.initialize(next).sumOfAllNumbers().result,
+                    (acc, next) -> acc + AccountsCalculator.initialize(next)
+                            .ignoreRedObjects(ignoreRedObjects)
+                            .sumOfAllNumbers()
+                            .result(),
                     (first, second) -> second);
         }
     }

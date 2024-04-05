@@ -19,6 +19,14 @@ class AccountsTest {
         assertThat(result).isEqualTo(expectedSumOfAllNumbers);
     }
 
+    @ParameterizedTest
+    @MethodSource("sumOfAllNumbersIgnoringRedObjectsTestArgs")
+    void testSumOfAllNumbersIgnoringRedObjects(String accountsJson, int expectedSumOfAllNumbers) {
+        int result = Accounts.fromJson(accountsJson).sumOfAllNumbersIgnoringRedObjects();
+
+        assertThat(result).isEqualTo(expectedSumOfAllNumbers);
+    }
+
     private static Stream<Arguments> sumOfAllNumbersTestArgs() {
         return Stream.of(
                 Arguments.of("[1,2,3]", 6),
@@ -29,6 +37,16 @@ class AccountsTest {
                 Arguments.of("[-1,{\"a\":1}]", 0),
                 Arguments.of("[]", 0),
                 Arguments.of("{}", 0),
+                Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d12/input.txt"), 156366)
+        );
+    }
+
+    private static Stream<Arguments> sumOfAllNumbersIgnoringRedObjectsTestArgs() {
+        return Stream.of(
+                Arguments.of("[1,2,3]", 6),
+                Arguments.of("[1,{\"c\":\"red\",\"b\":2},3]", 4),
+                Arguments.of("{\"d\":\"red\",\"e\":[1,2,3,4],\"f\":5}", 0),
+                Arguments.of("[1,\"red\",5]", 6),
                 Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d12/input.txt"), 156366)
         );
     }
