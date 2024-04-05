@@ -47,7 +47,7 @@ class AccountsTest {
                 Arguments.of("[1,{\"c\":\"red\",\"b\":2},3]", 4),
                 Arguments.of("{\"d\":\"red\",\"e\":[1,2,3,4],\"f\":5}", 0),
                 Arguments.of("[1,\"red\",5]", 6),
-                Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d12/input.txt"), 156366)
+                Arguments.of(FileLoader.readFileAsString("src/test/resources/inputs/y2015/d12/input.txt"), 96852)
         );
     }
 }
