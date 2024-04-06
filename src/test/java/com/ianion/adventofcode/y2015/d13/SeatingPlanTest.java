@@ -1,6 +1,7 @@
 package com.ianion.adventofcode.y2015.d13;
 
 import com.ianion.adventofcode.common.FileLoader;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,6 +31,16 @@ class SeatingPlanTest {
         int score = SeatingPlan.generateOptimalPlan(coefficients).calculateHappiness();
 
         assertThat(score).isEqualTo(expectedHappinessScore);
+    }
+
+    @Test
+    void testGenerateOptimalPlanIncludingMyself() {
+        Map<Person.Relationship, Integer> coefficients = parseAsHappinessCoefficients(
+                FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d13/input.txt"));
+
+        int score = SeatingPlan.generateOptimalPlanIncludingMyself(coefficients).calculateHappiness();
+
+        assertThat(score).isEqualTo(725);
     }
 
     private Map<Person.Relationship, Integer> parseAsHappinessCoefficients(List<String> input) {

@@ -6,7 +6,9 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Builder(toBuilder = true)
 public record SeatingPlan(
@@ -18,8 +20,38 @@ public record SeatingPlan(
     private static final Comparator<SeatingPlan> TABLE_HAPPINESS =
             Comparator.comparing(SeatingPlan::calculateHappiness);
 
+    private static final String ME = "Me";
+
     public static SeatingPlan generateOptimalPlan(Map<Person.Relationship, Integer> happinessCoefficients) {
         return SeatingPlan.initialize(happinessCoefficients).optimize();
+    }
+
+    public static SeatingPlan generateOptimalPlanIncludingMyself(Map<Person.Relationship, Integer> happinessCoefficients) {
+        Map<Person.Relationship, Integer> myCoefficients = generateMyHappinessCoefficients(happinessCoefficients);
+
+        return generateOptimalPlan(combineHappinessCoefficients(happinessCoefficients, myCoefficients));
+    }
+
+    private static Map<Person.Relationship, Integer> combineHappinessCoefficients(
+            Map<Person.Relationship, Integer> happinessCoefficients,
+            Map<Person.Relationship, Integer> myCoefficients
+    ) {
+        return Stream
+                .concat(
+                        happinessCoefficients.entrySet().stream(),
+                        myCoefficients.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private static Map<Person.Relationship, Integer> generateMyHappinessCoefficients(
+            Map<Person.Relationship, Integer> happinessCoefficients
+    ) {
+        Person me = Person.builder().name(ME).build();
+        return getAllPersons(happinessCoefficients).stream()
+                .flatMap(p -> Stream.of(
+                        Person.Relationship.builder().self(me).other(p).build(),
+                        Person.Relationship.builder().self(p).other(me).build()))
+                .collect(Collectors.toMap(Function.identity(), r -> 0));
     }
 
     public int calculateHappiness() {
