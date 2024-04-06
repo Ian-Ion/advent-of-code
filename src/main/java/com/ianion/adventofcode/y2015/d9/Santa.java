@@ -2,6 +2,7 @@ package com.ianion.adventofcode.y2015.d9;
 
 import lombok.Builder;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -14,11 +15,8 @@ public record Santa(
         Route route
 ) {
 
-    private static final BinaryOperator<Santa> LEAST_DISTANCE_TRAVELLED =
-            (a, b) -> a.route.totalDistance() < b.route.totalDistance() ? a : b;
-
-    private static final BinaryOperator<Santa> MOST_DISTANCE_TRAVELLED =
-            (a, b) -> a.route.totalDistance() > b.route.totalDistance() ? a : b;
+    private static final Comparator<Santa> DISTANCE_TRAVELLED =
+            Comparator.comparing(Santa::getTotalDistanceTravelled);
 
     public static int findShortestDistanceThatVisitsAll(Location.Connections connectedLocations) {
         return Santa.initialize(connectedLocations)
@@ -41,11 +39,11 @@ public record Santa(
     }
 
     public Santa visitAllUnvisitedLocationsAsQuicklyAsPossible() {
-        return travelOptimumRouteForUnvisitedLocations(LEAST_DISTANCE_TRAVELLED);
+        return travelOptimumRouteForUnvisitedLocations(BinaryOperator.minBy(DISTANCE_TRAVELLED));
     }
 
     public Santa visitAllUnvisitedLocationsAsSlowlyAsPossible() {
-        return travelOptimumRouteForUnvisitedLocations(MOST_DISTANCE_TRAVELLED);
+        return travelOptimumRouteForUnvisitedLocations(BinaryOperator.maxBy(DISTANCE_TRAVELLED));
     }
 
     private Santa travelOptimumRouteForUnvisitedLocations(BinaryOperator<Santa> optimumComparator) {
