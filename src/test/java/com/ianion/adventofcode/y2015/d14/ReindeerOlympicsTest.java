@@ -49,7 +49,7 @@ class ReindeerOlympicsTest {
                         "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
                         "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds."), 1000, 1120),
                 Arguments.of(
-                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d14/input.txt"), 2503, 1256)
+                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d14/input.txt"), 2503, 2660)
         );
     }
 
@@ -59,7 +59,7 @@ class ReindeerOlympicsTest {
                         "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
                         "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds."), 1000, 689),
                 Arguments.of(
-                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d14/input.txt"), 2503, 2660)
+                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d14/input.txt"), 2503, 1256)
         );
     }
 
