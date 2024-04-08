@@ -20,9 +20,9 @@ class ReindeerOlympicsTest {
             "(\\w+) can fly (\\d+) km/s for (\\d+) seconds, but then must rest for (\\d+) seconds.");
 
     @ParameterizedTest
-    @MethodSource("runRaceTestArgs")
-    void testRunRace(List<String> input, int raceTimeInSeconds, int expectedWinningDistance) {
-        Set<ReindeerOlympics.Reindeer> competitors = parseAsReindeers(input);
+    @MethodSource("getWinningDistanceArgs")
+    void testGetWinningDistance(List<String> input, int raceTimeInSeconds, int expectedWinningDistance) {
+        Set<Reindeer> competitors = parseAsReindeers(input);
 
         int distanceTravelledByLeader = ReindeerOlympics.initialize(competitors)
                 .runRace(raceTimeInSeconds)
@@ -31,26 +31,48 @@ class ReindeerOlympicsTest {
         assertThat(distanceTravelledByLeader).isEqualTo(expectedWinningDistance);
     }
 
-    private static Stream<Arguments> runRaceTestArgs() {
+    @ParameterizedTest
+    @MethodSource("getWinningPointsTestArgs")
+    void testGetWinningPoints(List<String> input, int raceTimeInSeconds, int expectedWinningPoints) {
+        Set<Reindeer> competitors = parseAsReindeers(input);
+
+        int winnerPoints = ReindeerOlympics.initialize(competitors)
+                .runRace(raceTimeInSeconds)
+                .getWinningPoints();
+
+        assertThat(winnerPoints).isEqualTo(expectedWinningPoints);
+    }
+
+    private static Stream<Arguments> getWinningDistanceArgs() {
         return Stream.of(
                 Arguments.of(List.of(
                         "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
                         "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds."), 1000, 1120),
                 Arguments.of(
+                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d14/input.txt"), 2503, 1256)
+        );
+    }
+
+    private static Stream<Arguments> getWinningPointsTestArgs() {
+        return Stream.of(
+                Arguments.of(List.of(
+                        "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
+                        "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds."), 1000, 689),
+                Arguments.of(
                         FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d14/input.txt"), 2503, 2660)
         );
     }
 
-    private static Set<ReindeerOlympics.Reindeer> parseAsReindeers(List<String> input) {
+    private static Set<Reindeer> parseAsReindeers(List<String> input) {
         return input.stream()
                 .map(ReindeerOlympicsTest::parseAsReindeer)
                 .collect(Collectors.toSet());
     }
 
-    private static ReindeerOlympics.Reindeer parseAsReindeer(String input) {
+    private static Reindeer parseAsReindeer(String input) {
         Matcher matcher = COMPETITOR.matcher(input);
         matcher.find();
-        return ReindeerOlympics.Reindeer.builder()
+        return Reindeer.builder()
                 .name(matcher.group(1))
                 .speedInKmS(Integer.parseInt(matcher.group(2)))
                 .secondsFlying(Integer.parseInt(matcher.group(3)))
