@@ -29,6 +29,16 @@ class RecipeTest {
         assertThat(perfectRecipe.score()).isEqualTo(expectedPerfectRecipeScore);
     }
 
+    @ParameterizedTest
+    @MethodSource("findPerfectRecipeWith500CaloriesTestArgs")
+    void testFindPerfectRecipeWith500Calories(List<String> input, int expectedPerfectRecipeScore) {
+        Set<Ingredient> ingredients = parseAsIngredients(input);
+
+        Recipe perfectRecipe = Recipe.findPerfectRecipeWithCalories(ingredients, 500);
+
+        assertThat(perfectRecipe.score()).isEqualTo(expectedPerfectRecipeScore);
+    }
+
     private static Stream<Arguments> findPerfectRecipeTestArgs() {
         return Stream.of(
                 Arguments.of(List.of(
@@ -36,6 +46,16 @@ class RecipeTest {
                         "Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3"), 62842880),
                 Arguments.of(
                         FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d15/input.txt"), 13882464)
+        );
+    }
+
+    private static Stream<Arguments> findPerfectRecipeWith500CaloriesTestArgs() {
+        return Stream.of(
+                Arguments.of(List.of(
+                        "Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8",
+                        "Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3"), 57600000),
+                Arguments.of(
+                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d15/input.txt"), 11171160)
         );
     }
 

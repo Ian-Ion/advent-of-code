@@ -24,6 +24,10 @@ public record Recipe(
         return Recipe.using(ingredients).perfect();
     }
 
+    public static Recipe findPerfectRecipeWithCalories(Set<Ingredient> ingredients, int calorieTarget) {
+        return Recipe.using(ingredients).perfect(calorieTarget);
+    }
+
     private static Recipe using(Set<Ingredient> ingredients) {
         return Recipe.builder()
                 .ingredients(ingredients.stream().toList())
@@ -34,6 +38,15 @@ public record Recipe(
     private Recipe perfect() {
         return generatePossibleQuantityCombinationsForUnusedIngredients().stream()
                 .map(this::withQuantities)
+                .map(Recipe::generateScore)
+                .reduce(BinaryOperator.maxBy(HIGHEST_SCORE))
+                .orElse(this);
+    }
+
+    private Recipe perfect(int calorieTarget) {
+        return generatePossibleQuantityCombinationsForUnusedIngredients().stream()
+                .map(this::withQuantities)
+                .filter(recipe -> recipe.countCalories() == calorieTarget)
                 .map(Recipe::generateScore)
                 .reduce(BinaryOperator.maxBy(HIGHEST_SCORE))
                 .orElse(this);
@@ -94,6 +107,10 @@ public record Recipe(
                                 * sumOf(Ingredient::flavor)
                                 * sumOf(Ingredient::texture))
                 .build();
+    }
+
+    private int countCalories() {
+        return sumOf(Ingredient::calories);
     }
 
     private int sumOf(ToIntFunction<Ingredient> property) {
