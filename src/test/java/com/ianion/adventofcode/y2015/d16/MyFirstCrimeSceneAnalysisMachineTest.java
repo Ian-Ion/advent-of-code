@@ -16,31 +16,43 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MyFirstCrimeSceneAnalysisMachineTest {
 
+    private static final Set<AuntSue.Quality> REQUIRED_QUALITIES = Set.of(
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.CHILDREN).amount(3).build(),
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.CATS).amount(7).build(),
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.SAMOYEDS).amount(2).build(),
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.POMERANIANS).amount(3).build(),
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.AKITAS).amount(0).build(),
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.VIZSLAS).amount(0).build(),
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.GOLDFISH).amount(5).build(),
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.TREES).amount(3).build(),
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.CARS).amount(2).build(),
+            AuntSue.Quality.builder().attribute(AuntSue.Attribute.PERFUMES).amount(1).build());
+
     private static final Pattern AUNT_SUE_NAME = Pattern.compile("(\\w+ \\d+)");
     private static final Pattern AUNT_SUE_QUALITY = Pattern.compile("(\\w+): (\\d+)");
 
     @Test
-    void testFindMatchingSue() {
-        Set<AuntSue.Quality> requiredQualities = Set.of(
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.CHILDREN).amount(3).build(),
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.CATS).amount(7).build(),
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.SAMOYEDS).amount(2).build(),
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.POMERANIANS).amount(3).build(),
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.AKITAS).amount(0).build(),
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.VIZSLAS).amount(0).build(),
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.GOLDFISH).amount(5).build(),
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.TREES).amount(3).build(),
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.CARS).amount(2).build(),
-                AuntSue.Quality.builder().attribute(AuntSue.Attribute.PERFUMES).amount(1).build());
-
+    void testFindMatchingSueV1() {
         List<AuntSue> auntSues = parseAsAuntSues(
                 FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d16/input.txt"));
 
         Optional<AuntSue> matchingSue = MyFirstCrimeSceneAnalysisMachine
-                .findMatchingSue(auntSues, requiredQualities);
+                .findMatchingSueV1(auntSues, REQUIRED_QUALITIES);
 
         assertThat(matchingSue).isPresent().hasValueSatisfying(
                 sue -> assertThat(sue.name()).isEqualTo("Sue 40"));
+    }
+
+    @Test
+    void testFindMatchingSueV2() {
+        List<AuntSue> auntSues = parseAsAuntSues(
+                FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d16/input.txt"));
+
+        Optional<AuntSue> matchingSue = MyFirstCrimeSceneAnalysisMachine
+                .findMatchingSueV2(auntSues, REQUIRED_QUALITIES);
+
+        assertThat(matchingSue).isPresent().hasValueSatisfying(
+                sue -> assertThat(sue.name()).isEqualTo("Sue 241"));
     }
 
     private List<AuntSue> parseAsAuntSues(List<String> input) {
