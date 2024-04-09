@@ -53,11 +53,19 @@ public record MyFirstCrimeSceneAnalysisMachine(
 
     private boolean matchesRequiredQualities(AuntSue candidate) {
         return requiredQualities.stream()
-                .allMatch(requiredQuality -> candidate.qualities().stream()
-                        .filter(candidateQuality -> candidateQuality.attribute().equals(requiredQuality.attribute()))
-                        .findFirst()
+                .allMatch(requiredQuality -> lookForQualityOfCandidate(candidate, requiredQuality)
                         .map(candidateQuality -> satisfies(candidateQuality, requiredQuality))
                         .orElse(true));
+    }
+
+    private static Optional<AuntSue.Quality> lookForQualityOfCandidate(AuntSue candidate, AuntSue.Quality requiredQuality) {
+        return candidate.qualities().stream()
+                .filter(candidateQuality -> matchingAttribute(candidateQuality, requiredQuality))
+                .findFirst();
+    }
+
+    private static boolean matchingAttribute(AuntSue.Quality candidate, AuntSue.Quality required) {
+        return candidate.attribute().equals(required.attribute());
     }
 
     private static boolean satisfies(AuntSue.Quality candidate, AuntSue.Quality required) {
