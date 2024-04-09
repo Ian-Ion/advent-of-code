@@ -36,11 +36,11 @@ public record Refridgerator(
                 .map(this::fillNextContainer)
                 .map(Refridgerator::generateAllPossibleFilledContainerRefridgerators)
                 .flatMap(Set::stream)
-                .filter(Refridgerator::hasNoUnstoredLitres)
+                .filter(Refridgerator::hasStoredAllLitres)
                 .collect(Collectors.toSet());
     }
 
-    private boolean hasNoUnstoredLitres() {
+    private boolean hasStoredAllLitres() {
         return litresToStore == 0;
     }
 
