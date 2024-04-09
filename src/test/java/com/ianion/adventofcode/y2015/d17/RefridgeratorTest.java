@@ -16,20 +16,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RefridgeratorTest {
 
     @ParameterizedTest
-    @MethodSource("findNumberOfStorageCombinationsTestArgs")
-    void testFindNumberOfStorageCombinations(
+    @MethodSource("findNumberOfFilledContainerCombinationsWhichFitExactlyTestArgs")
+    void testFindNumberOfFilledContainerCombinationsWhichFitExactly(
             List<String> input,
             int litresOfEggnogToStore,
             int expectedNumberOfStorageCombinations
     ) {
         Set<Container> containers = parseAsContainers(input);
 
-        int result = Refridgerator.findNumberOfStorageCombinations(containers, litresOfEggnogToStore);
+        int result = Refridgerator.findNumberOfFilledContainerCombinationsWhichFitExactly(containers, litresOfEggnogToStore);
 
         assertThat(result).isEqualTo(expectedNumberOfStorageCombinations);
     }
 
-    private static Stream<Arguments> findNumberOfStorageCombinationsTestArgs() {
+    private static Stream<Arguments> findNumberOfFilledContainerCombinationsWhichFitExactlyTestArgs() {
         return Stream.of(
                 Arguments.of(List.of(
                         "20", "15", "10", "5", "5"), 25, 4),

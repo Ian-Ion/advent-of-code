@@ -13,7 +13,7 @@ public record Refridgerator(
         int litresToStore
 ) {
 
-    public static int findNumberOfStorageCombinations(
+    public static int findNumberOfFilledContainerCombinationsWhichFitExactly(
             Set<Container> containers,
             int litresToStore
     ) {
