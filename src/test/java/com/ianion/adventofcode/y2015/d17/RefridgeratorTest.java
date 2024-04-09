@@ -34,7 +34,7 @@ class RefridgeratorTest {
                 Arguments.of(List.of(
                         "20", "15", "10", "5", "5"), 25, 4),
                 Arguments.of(
-                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d17/input.txt"), 150, 0)
+                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d17/input.txt"), 150, 654)
         );
     }
 
