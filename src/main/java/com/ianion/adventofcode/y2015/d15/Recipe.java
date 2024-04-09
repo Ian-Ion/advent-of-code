@@ -34,7 +34,6 @@ public record Recipe(
     private Recipe perfect() {
         return generatePossibleQuantityCombinationsForUnusedIngredients().stream()
                 .map(this::withQuantities)
-                .filter(r -> r.sumQuantities() == 100)
                 .map(Recipe::generateScore)
                 .reduce(BinaryOperator.maxBy(HIGHEST_SCORE))
                 .orElse(this);
