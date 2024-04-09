@@ -32,7 +32,7 @@ public record Recipe(
     }
 
     private Recipe perfect() {
-        return generatePossibleQuantityCombinations().stream()
+        return generatePossibleQuantityCombinationsForUnusedIngredients().stream()
                 .map(this::withQuantities)
                 .filter(r -> r.sumQuantities() == 100)
                 .map(Recipe::generateScore)
@@ -40,28 +40,46 @@ public record Recipe(
                 .orElse(this);
     }
 
-    private List<List<Quantity>> generatePossibleQuantityCombinations() {
-        Optional<Ingredient> unusedIngredient = ingredients.stream()
+    private List<List<Quantity>> generatePossibleQuantityCombinationsForUnusedIngredients() {
+        return findAnyUnusedIngredient()
+                .map(this::generatePossibleQuantitiesForIngredient)
+                .orElse(List.of(quantities));
+    }
+
+    private List<List<Quantity>> generatePossibleQuantitiesForIngredient(Ingredient nextIngredient) {
+        return possibleTeaspoonAmountsForUnusedIngredient()
+                .mapToObj(nextIngredientQuantity -> generateRecursiveListOfPossibleQuantitiesWith(
+                        nextIngredient, nextIngredientQuantity))
+                .flatMap(List::stream)
+                .toList();
+    }
+
+    private List<List<Quantity>> generateRecursiveListOfPossibleQuantitiesWith(
+            Ingredient nextIngredient,
+            int nextIngredientQuantity
+    ) {
+        Quantity nextQuantity = Quantity.builder()
+                .ingredient(nextIngredient)
+                .teaspoons(nextIngredientQuantity)
+                .build();
+
+        List<Quantity> updatedQuantities = Stream
+                .concat(quantities.stream(), Stream.of(nextQuantity))
+                .toList();
+
+        return withQuantities(updatedQuantities)
+                .generatePossibleQuantityCombinationsForUnusedIngredients();
+    }
+
+    private IntStream possibleTeaspoonAmountsForUnusedIngredient() {
+        return IntStream
+                .iterate(100 - sumQuantities(), i -> i > 0, i -> i - 1);
+    }
+
+    private Optional<Ingredient> findAnyUnusedIngredient() {
+        return ingredients.stream()
                 .filter(i -> quantities.stream().noneMatch(q -> q.ingredient().equals(i)))
                 .findFirst();
-
-        return unusedIngredient
-                .map(nextIngredient -> IntStream
-                        .iterate(100 - sumQuantities(), i -> i > 0, i -> i - 1)
-                        .mapToObj(nextIngredientQuantity -> {
-                            Quantity quantity = Quantity.builder()
-                                    .ingredient(nextIngredient)
-                                    .teaspoons(nextIngredientQuantity)
-                                    .build();
-
-                            List<Quantity> updatedQuantities = Stream.concat(quantities.stream(), Stream.of(quantity)).toList();
-
-                            return withQuantities(updatedQuantities)
-                                    .generatePossibleQuantityCombinations();
-                        })
-                        .flatMap(List::stream)
-                        .toList())
-                .orElse(List.of(quantities));
     }
 
     private int sumQuantities() {
