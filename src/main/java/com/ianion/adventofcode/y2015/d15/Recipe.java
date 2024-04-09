@@ -92,7 +92,7 @@ public record Recipe(
                 .build();
     }
 
-    public Recipe generateScore() {
+    private Recipe generateScore() {
         return this.toBuilder()
                 .score(
                         sumOf(Ingredient::capacity)
