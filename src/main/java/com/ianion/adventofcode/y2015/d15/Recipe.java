@@ -41,19 +41,15 @@ public record Recipe(
 
     private List<List<Quantity>> generatePossibleQuantityCombinationsForUnusedIngredients() {
         return findAnyUnusedIngredient()
-                .map(this::generatePossibleQuantitiesForIngredient)
+                .map(nextIngredient -> possibleTeaspoonAmountsForUnusedIngredient()
+                        .mapToObj(amount -> withQuantities(mergeIntoExistingQuantities(nextIngredient, amount))
+                                .generatePossibleQuantityCombinationsForUnusedIngredients())
+                        .flatMap(List::stream)
+                        .toList())
                 .orElse(List.of(quantities));
     }
 
-    private List<List<Quantity>> generatePossibleQuantitiesForIngredient(Ingredient nextIngredient) {
-        return possibleTeaspoonAmountsForUnusedIngredient()
-                .mapToObj(amount -> withQuantities(mergeWithExistingQuantities(nextIngredient, amount))
-                        .generatePossibleQuantityCombinationsForUnusedIngredients())
-                .flatMap(List::stream)
-                .toList();
-    }
-
-    private List<Quantity> mergeWithExistingQuantities(
+    private List<Quantity> mergeIntoExistingQuantities(
             Ingredient nextIngredient,
             int nextIngredientQuantity
     ) {
