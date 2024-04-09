@@ -47,13 +47,13 @@ public record Recipe(
 
     private List<List<Quantity>> generatePossibleQuantitiesForIngredient(Ingredient nextIngredient) {
         return possibleTeaspoonAmountsForUnusedIngredient()
-                .mapToObj(nextIngredientQuantity -> generateRecursiveListOfPossibleQuantitiesWith(
-                        nextIngredient, nextIngredientQuantity))
+                .mapToObj(amount -> withQuantities(mergeWithExistingQuantities(nextIngredient, amount))
+                        .generatePossibleQuantityCombinationsForUnusedIngredients())
                 .flatMap(List::stream)
                 .toList();
     }
 
-    private List<List<Quantity>> generateRecursiveListOfPossibleQuantitiesWith(
+    private List<Quantity> mergeWithExistingQuantities(
             Ingredient nextIngredient,
             int nextIngredientQuantity
     ) {
@@ -62,17 +62,16 @@ public record Recipe(
                 .teaspoons(nextIngredientQuantity)
                 .build();
 
-        List<Quantity> updatedQuantities = Stream
+        return Stream
                 .concat(quantities.stream(), Stream.of(nextQuantity))
                 .toList();
-
-        return withQuantities(updatedQuantities)
-                .generatePossibleQuantityCombinationsForUnusedIngredients();
     }
 
     private IntStream possibleTeaspoonAmountsForUnusedIngredient() {
-        return IntStream
-                .iterate(100 - sumQuantities(), i -> i > 0, i -> i - 1);
+        return IntStream.iterate(
+                100 - sumQuantities(),
+                i -> i > 0,
+                i -> i - 1);
     }
 
     private Optional<Ingredient> findAnyUnusedIngredient() {
