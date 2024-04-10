@@ -14,23 +14,28 @@ public record Refridgerator(
         int litresToStore
 ) {
 
-    public static final Comparator<Refridgerator> BY_NUMBER_OF_FILLED_CONTAINERS =
+    private static final Comparator<Refridgerator> BY_NUMBER_OF_FILLED_CONTAINERS =
             Comparator.comparing(r -> r.filledContainers().size());
 
-    public static int findNumberOfPossibleRefridgeratorsWhichFitExactly(
-            Set<Container> containers,
-            int litresToStore
-    ) {
-        return Refridgerator.initialize(containers, litresToStore)
-                .generateAllPossibleFilledContainerRefridgerators().size();
+    public static Refridgerator withContainers(Set<Container> containers) {
+        return Refridgerator.builder()
+                .emptyContainers(containers)
+                .filledContainers(Set.of())
+                .build();
     }
 
-    public static int findNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactly(
-            Set<Container> containers,
+    public int findNumberOfPossibleWaysToStoreExactly(
             int litresToStore
     ) {
-        Set<Refridgerator> possibleRefridgerators = Refridgerator.initialize(containers, litresToStore)
-                .generateAllPossibleFilledContainerRefridgerators();
+        return prepareToStore(litresToStore)
+                .generateAllPossibleRefridgeratorsAfterStoring().size();
+    }
+
+    public int findNumberOfPossibleWaysToStoreExactlyUsingMinimumContainers(
+            int litresToStore
+    ) {
+        Set<Refridgerator> possibleRefridgerators = prepareToStore(litresToStore)
+                .generateAllPossibleRefridgeratorsAfterStoring();
 
         int minFilledContainersNeeded = possibleRefridgerators.stream()
                 .min(BY_NUMBER_OF_FILLED_CONTAINERS)
@@ -42,20 +47,18 @@ public record Refridgerator(
                 .count();
     }
 
-    private static Refridgerator initialize(Set<Container> containers, int litresToStore) {
+    private Refridgerator prepareToStore(int litresToStore) {
         return Refridgerator.builder()
-                .emptyContainers(containers)
-                .filledContainers(Set.of())
                 .litresToStore(litresToStore)
                 .build();
     }
 
-    private Set<Refridgerator> generateAllPossibleFilledContainerRefridgerators() {
+    private Set<Refridgerator> generateAllPossibleRefridgeratorsAfterStoring() {
         Set<Container> viableContainers = findAllEmptyContainerWhichCanBeFilled();
 
         return viableContainers.isEmpty() ? Set.of(this) : viableContainers.stream()
                 .map(this::fillNextContainer)
-                .map(Refridgerator::generateAllPossibleFilledContainerRefridgerators)
+                .map(Refridgerator::generateAllPossibleRefridgeratorsAfterStoring)
                 .flatMap(Set::stream)
                 .filter(Refridgerator::hasStoredAllLitres)
                 .collect(Collectors.toSet());

@@ -16,35 +16,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RefridgeratorTest {
 
     @ParameterizedTest
-    @MethodSource("findNumberOfPossibleRefridgeratorsWhichFitExactlyTestArgs")
-    void testFindNumberOfPossibleRefridgeratorsWhichFitExactly(
+    @MethodSource("findNumberOfPossibleWaysToStoreExactlyTestArgs")
+    void testFindNumberOfPossibleWaysToStoreExactly(
             List<String> input,
             int litresOfEggnogToStore,
             int expectedNumberOfStorageCombinations
     ) {
         Set<Container> containers = parseAsContainers(input);
 
-        int result = Refridgerator.findNumberOfPossibleRefridgeratorsWhichFitExactly(containers, litresOfEggnogToStore);
+        int result = Refridgerator.withContainers(containers)
+                .findNumberOfPossibleWaysToStoreExactly(litresOfEggnogToStore);
 
         assertThat(result).isEqualTo(expectedNumberOfStorageCombinations);
     }
 
     @ParameterizedTest
-    @MethodSource("findNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactlyTestArgs")
-    void testfindNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactly(
+    @MethodSource("findNumberOfPossibleWaysToStoreExactlyUsingMinimumContainersTestArgs")
+    void testFindNumberOfPossibleWaysToStoreExactlyUsingMinimumContainers(
             List<String> input,
             int litresOfEggnogToStore,
             int expectedNumberOfStorageCombinations
     ) {
         Set<Container> containers = parseAsContainers(input);
 
-        int result = Refridgerator.findNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactly(
-                containers, litresOfEggnogToStore);
+        int result = Refridgerator.withContainers(containers)
+                .findNumberOfPossibleWaysToStoreExactlyUsingMinimumContainers(litresOfEggnogToStore);
 
         assertThat(result).isEqualTo(expectedNumberOfStorageCombinations);
     }
 
-    private static Stream<Arguments> findNumberOfPossibleRefridgeratorsWhichFitExactlyTestArgs() {
+    private static Stream<Arguments> findNumberOfPossibleWaysToStoreExactlyTestArgs() {
         return Stream.of(
                 Arguments.of(List.of(
                         "20", "15", "10", "5", "5"), 25, 4),
@@ -53,7 +54,7 @@ class RefridgeratorTest {
         );
     }
 
-    private static Stream<Arguments> findNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactlyTestArgs() {
+    private static Stream<Arguments> findNumberOfPossibleWaysToStoreExactlyUsingMinimumContainersTestArgs() {
         return Stream.of(
                 Arguments.of(List.of(
                         "20", "15", "10", "5", "5"), 25, 3),
