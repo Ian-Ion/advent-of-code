@@ -2,6 +2,7 @@ package com.ianion.adventofcode.y2015.d17;
 
 import lombok.Builder;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,12 +14,32 @@ public record Refridgerator(
         int litresToStore
 ) {
 
-    public static int findNumberOfFilledContainerCombinationsWhichFitExactly(
+    public static final Comparator<Refridgerator> BY_NUMBER_OF_FILLED_CONTAINERS =
+            Comparator.comparing(r -> r.filledContainers().size());
+
+    public static int findNumberOfPossibleRefridgeratorsWhichFitExactly(
             Set<Container> containers,
             int litresToStore
     ) {
         return Refridgerator.initialize(containers, litresToStore)
                 .generateAllPossibleFilledContainerRefridgerators().size();
+    }
+
+    public static int findNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactly(
+            Set<Container> containers,
+            int litresToStore
+    ) {
+        Set<Refridgerator> possibleRefridgerators = Refridgerator.initialize(containers, litresToStore)
+                .generateAllPossibleFilledContainerRefridgerators();
+
+        int minFilledContainersNeeded = possibleRefridgerators.stream()
+                .min(BY_NUMBER_OF_FILLED_CONTAINERS)
+                .map(r -> r.filledContainers().size())
+                .orElse(0);
+
+        return (int) possibleRefridgerators.stream()
+                .filter(r -> r.filledContainers().size() == minFilledContainersNeeded)
+                .count();
     }
 
     private static Refridgerator initialize(Set<Container> containers, int litresToStore) {

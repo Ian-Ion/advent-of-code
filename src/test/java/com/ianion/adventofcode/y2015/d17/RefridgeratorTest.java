@@ -16,25 +16,49 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RefridgeratorTest {
 
     @ParameterizedTest
-    @MethodSource("findNumberOfFilledContainerCombinationsWhichFitExactlyTestArgs")
-    void testFindNumberOfFilledContainerCombinationsWhichFitExactly(
+    @MethodSource("findNumberOfPossibleRefridgeratorsWhichFitExactlyTestArgs")
+    void testFindNumberOfPossibleRefridgeratorsWhichFitExactly(
             List<String> input,
             int litresOfEggnogToStore,
             int expectedNumberOfStorageCombinations
     ) {
         Set<Container> containers = parseAsContainers(input);
 
-        int result = Refridgerator.findNumberOfFilledContainerCombinationsWhichFitExactly(containers, litresOfEggnogToStore);
+        int result = Refridgerator.findNumberOfPossibleRefridgeratorsWhichFitExactly(containers, litresOfEggnogToStore);
 
         assertThat(result).isEqualTo(expectedNumberOfStorageCombinations);
     }
 
-    private static Stream<Arguments> findNumberOfFilledContainerCombinationsWhichFitExactlyTestArgs() {
+    @ParameterizedTest
+    @MethodSource("findNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactlyTestArgs")
+    void testfindNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactly(
+            List<String> input,
+            int litresOfEggnogToStore,
+            int expectedNumberOfStorageCombinations
+    ) {
+        Set<Container> containers = parseAsContainers(input);
+
+        int result = Refridgerator.findNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactly(
+                containers, litresOfEggnogToStore);
+
+        assertThat(result).isEqualTo(expectedNumberOfStorageCombinations);
+    }
+
+    private static Stream<Arguments> findNumberOfPossibleRefridgeratorsWhichFitExactlyTestArgs() {
         return Stream.of(
                 Arguments.of(List.of(
                         "20", "15", "10", "5", "5"), 25, 4),
                 Arguments.of(
                         FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d17/input.txt"), 150, 654)
+        );
+    }
+
+    private static Stream<Arguments> findNumberOfPossibleRefridgeratorsUsingMinContainersWhichFitExactlyTestArgs() {
+        return Stream.of(
+                Arguments.of(List.of(
+                        "20", "15", "10", "5", "5"), 25, 3),
+                Arguments.of(
+                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d17/input.txt"), 150, 57)
         );
     }
 
