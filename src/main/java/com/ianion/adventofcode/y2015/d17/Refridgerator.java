@@ -24,16 +24,12 @@ public record Refridgerator(
                 .build();
     }
 
-    public int findNumberOfPossibleWaysToStoreExactly(
-            int litresToStore
-    ) {
+    public int findNumberOfPossibleWaysToStoreExactly(int litresToStore) {
         return prepareToStore(litresToStore)
                 .generateAllPossibleRefridgeratorsAfterStoring().size();
     }
 
-    public int findNumberOfPossibleWaysToStoreExactlyUsingMinimumContainers(
-            int litresToStore
-    ) {
+    public int findNumberOfPossibleWaysToStoreExactlyUsingMinimumContainers(int litresToStore) {
         Set<Refridgerator> possibleRefridgerators = prepareToStore(litresToStore)
                 .generateAllPossibleRefridgeratorsAfterStoring();
 
@@ -68,12 +64,23 @@ public record Refridgerator(
         return litresToStore == 0;
     }
 
-    private Refridgerator fillNextContainer(Container emptyContainer) {
+    private Refridgerator fillNextContainer(Container container) {
         return this.toBuilder()
-                .emptyContainers(emptyContainers.stream().filter(c -> !c.equals(emptyContainer)).collect(Collectors.toSet()))
-                .filledContainers(Stream.concat(filledContainers.stream(), Stream.of(emptyContainer)).collect(Collectors.toSet()))
-                .litresToStore(litresToStore - emptyContainer.capacityInLitres())
+                .emptyContainers(removeFromEmptyContainers(container))
+                .filledContainers(addToFilledContainers(container))
+                .litresToStore(litresToStore - container.capacityInLitres())
                 .build();
+    }
+
+    private Set<Container> removeFromEmptyContainers(Container emptyContainer) {
+        return emptyContainers.stream()
+                .filter(c -> !c.equals(emptyContainer))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Container> addToFilledContainers(Container emptyContainer) {
+        return Stream.concat(filledContainers.stream(), Stream.of(emptyContainer))
+                .collect(Collectors.toSet());
     }
 
     private Set<Container> findAllEmptyContainerWhichCanBeFilled() {
