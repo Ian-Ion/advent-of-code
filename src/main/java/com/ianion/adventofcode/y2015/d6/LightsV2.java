@@ -4,34 +4,44 @@ import com.google.common.collect.ImmutableMap;
 import com.ianion.adventofcode.common.Coordinate;
 import lombok.Builder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 @Builder(toBuilder = true)
-public record LightSwitchStateV2(
+public record LightsV2(
         Map<Coordinate, Integer> brightness
-) implements LightSwitchState {
+) implements Lights {
 
-    public static LightSwitchState create() {
-        return LightSwitchStateV2.builder()
+    public static int countSwitchedOnAfterFollowingInstructions(List<SwitchInstruction> instructions) {
+        return instructions.stream()
+                .reduce(
+                        LightsV2.create(),
+                        Lights::apply,
+                        (first, second) -> second)
+                .getAnswer();
+    }
+
+    private static Lights create() {
+        return LightsV2.builder()
                 .brightness(Map.of())
                 .build();
     }
 
     @Override
-    public LightSwitchState switchOn(Set<Coordinate> toSwitchOn) {
+    public Lights switchOn(Set<Coordinate> toSwitchOn) {
         return increaseBrightnessBy(toSwitchOn, 1);
     }
 
     @Override
-    public LightSwitchState switchOff(Set<Coordinate> toSwitchOff) {
+    public Lights switchOff(Set<Coordinate> toSwitchOff) {
         return increaseBrightnessBy(toSwitchOff, -1);
     }
 
     @Override
-    public LightSwitchState toggle(Set<Coordinate> toToggle) {
+    public Lights toggle(Set<Coordinate> toToggle) {
         return increaseBrightnessBy(toToggle, 2);
     }
 
@@ -40,7 +50,7 @@ public record LightSwitchStateV2(
         return brightness.values().stream().reduce(0, Integer::sum);
     }
 
-    private LightSwitchStateV2 increaseBrightnessBy(Set<Coordinate> toSwitchOn, int brightnessDelta) {
+    private LightsV2 increaseBrightnessBy(Set<Coordinate> toSwitchOn, int brightnessDelta) {
         var toChange = calculateChanges(toSwitchOn, c -> brightness.getOrDefault(c, 0) + brightnessDelta);
         var unaffected = getUnaffected(toSwitchOn);
 

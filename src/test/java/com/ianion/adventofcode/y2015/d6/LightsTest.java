@@ -13,16 +13,16 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LightSwitcherTest {
+class LightsTest {
 
     private static final Pattern COMMAND = Pattern.compile("(turn on|turn off|toggle) (\\d+),(\\d+) through (\\d+),(\\d+)");
 
     @ParameterizedTest
     @MethodSource("countSwitchedOnAfterFollowingV1InstructionsTestArgs")
     void testCountSwitchedOnAfterFollowingV1Instructions(List<String> input, int expectedOutput) {
-        List<LightSwitcher.SwitchInstruction> instructions = parseAsInstructionsList(input);
+        List<SwitchInstruction> instructions = parseAsInstructionsList(input);
 
-        int result = LightSwitcher.countSwitchedOnAfterFollowingV1Instructions(instructions);
+        int result = LightsV1.countSwitchedOnAfterFollowingInstructions(instructions);
 
         assertThat(result).isEqualTo(expectedOutput);
     }
@@ -30,9 +30,9 @@ class LightSwitcherTest {
     @ParameterizedTest
     @MethodSource("countSwitchedOnAfterFollowingV2InstructionsTestArgs")
     void testCountSwitchedOnAfterFollowingV2Instructions(List<String> input, int expectedOutput) {
-        List<LightSwitcher.SwitchInstruction> instructions = parseAsInstructionsList(input);
+        List<SwitchInstruction> instructions = parseAsInstructionsList(input);
 
-        int result = LightSwitcher.countSwitchedOnAfterFollowingV2Instructions(instructions);
+        int result = LightsV2.countSwitchedOnAfterFollowingInstructions(instructions);
 
         assertThat(result).isEqualTo(expectedOutput);
     }
@@ -54,12 +54,12 @@ class LightSwitcherTest {
         );
     }
 
-    private static List<LightSwitcher.SwitchInstruction> parseAsInstructionsList(List<String> input) {
+    private static List<SwitchInstruction> parseAsInstructionsList(List<String> input) {
         return input.stream()
                 .map(s -> {
                     Matcher m = COMMAND.matcher(s);
                     m.find();
-                    return LightSwitcher.SwitchInstruction.builder()
+                    return SwitchInstruction.builder()
                             .behavior(parseBehavior(m.group(1)))
                             .start(
                                     Coordinate.builder()
@@ -76,11 +76,11 @@ class LightSwitcherTest {
                 .toList();
     }
 
-    private static LightSwitcher.Behavior parseBehavior(String s) {
+    private static Behavior parseBehavior(String s) {
         return s.equals("turn on")
-                ? LightSwitcher.Behavior.SWITCH_ON
+                ? Behavior.SWITCH_ON
                 : s.equals("turn off")
-                ? LightSwitcher.Behavior.SWITCH_OFF
-                : LightSwitcher.Behavior.TOGGLE;
+                ? Behavior.SWITCH_OFF
+                : Behavior.TOGGLE;
     }
 }

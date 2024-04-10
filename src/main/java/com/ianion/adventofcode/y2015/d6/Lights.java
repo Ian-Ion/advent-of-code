@@ -4,9 +4,9 @@ import com.ianion.adventofcode.common.Coordinate;
 
 import java.util.Set;
 
-public interface LightSwitchState {
+public interface Lights {
 
-    default LightSwitchState apply(LightSwitcher.SwitchInstruction instruction) {
+    default Lights apply(SwitchInstruction instruction) {
         return switch (instruction.behavior()) {
             case SWITCH_ON -> switchOn(instruction.getAllAffectedSwitches());
             case SWITCH_OFF -> switchOff(instruction.getAllAffectedSwitches());
@@ -14,11 +14,11 @@ public interface LightSwitchState {
         };
     }
 
-    LightSwitchState switchOn(Set<Coordinate> toSwitchOn);
+    Lights switchOn(Set<Coordinate> toSwitchOn);
 
-    LightSwitchState switchOff(Set<Coordinate> toSwitchOff);
+    Lights switchOff(Set<Coordinate> toSwitchOff);
 
-    LightSwitchState toggle(Set<Coordinate> toToggle);
+    Lights toggle(Set<Coordinate> toToggle);
 
     int getAnswer();
 }
