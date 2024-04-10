@@ -33,13 +33,24 @@ public record Refridgerator(
         Set<Refridgerator> possibleRefridgerators = prepareToStore(litresToStore)
                 .generateAllPossibleRefridgeratorsAfterStoring();
 
-        int minFilledContainersNeeded = possibleRefridgerators.stream()
+        int minNumberOfFilledContainers = getMinNumberOfFilledContainers(possibleRefridgerators);
+
+        return countNumberOfRefridgeratorsWithExactly(possibleRefridgerators, minNumberOfFilledContainers);
+    }
+
+    private static Integer getMinNumberOfFilledContainers(Set<Refridgerator> possibleRefridgerators) {
+        return possibleRefridgerators.stream()
                 .min(BY_NUMBER_OF_FILLED_CONTAINERS)
                 .map(r -> r.filledContainers().size())
                 .orElse(0);
+    }
 
+    private static int countNumberOfRefridgeratorsWithExactly(
+            Set<Refridgerator> possibleRefridgerators,
+            int numberOfFilledContainers
+    ) {
         return (int) possibleRefridgerators.stream()
-                .filter(r -> r.filledContainers().size() == minFilledContainersNeeded)
+                .filter(r -> r.filledContainers().size() == numberOfFilledContainers)
                 .count();
     }
 
