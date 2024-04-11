@@ -30,7 +30,7 @@ public record Santa(
                 .directionsFollowed;
     }
 
-    public static Santa initialize(List<Direction> directions) {
+    private static Santa initialize(List<Direction> directions) {
         return Santa.builder()
                 .remainingDirections(directions)
                 .directionsFollowed(0)
@@ -38,11 +38,11 @@ public record Santa(
                 .build();
     }
 
-    public boolean isNotFinishedOrEnteredBasement() {
+    private boolean isNotFinishedOrEnteredBasement() {
         return currentFloor >= 0 && !remainingDirections.isEmpty();
     }
 
-    public Santa followNextDirection() {
+    private Santa followNextDirection() {
         Direction nextDirection = this.remainingDirections.get(0);
 
         return this.toBuilder()
