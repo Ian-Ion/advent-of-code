@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 @Builder(toBuilder = true)
 public record Lights(
         Set<Coordinate> switchedOn,
+        Set<Coordinate> stuckOn,
         int gridWidth,
         int gridHeight,
         int framesToAnimate
@@ -26,7 +27,10 @@ public record Lights(
     }
 
     public Lights animate(int frames) {
-        Lights startOfAnimation = this.toBuilder().framesToAnimate(frames).build();
+        Lights startOfAnimation = this.toBuilder()
+                .stuckOn(Set.of())
+                .framesToAnimate(frames)
+                .build();
 
         return Stream
                 .iterate(
@@ -34,6 +38,32 @@ public record Lights(
                         Lights::hasMoreToAnimate,
                         Lights::animate)
                 .reduce(startOfAnimation, (first, second) -> second.animate());
+    }
+
+    public Lights animateWithCornerLightsStuckOn(int frames) {
+        Set<Coordinate> cornerLights = calculateCornerLights();
+
+        Lights startOfAnimation = this.toBuilder()
+                .switchedOn(Stream.concat(switchedOn.stream(), cornerLights.stream()).collect(Collectors.toSet()))
+                .stuckOn(cornerLights)
+                .framesToAnimate(frames)
+                .build();
+
+        return Stream
+                .iterate(
+                        startOfAnimation,
+                        Lights::hasMoreToAnimate,
+                        Lights::animate)
+                .reduce(startOfAnimation, (first, second) -> second.animate());
+    }
+
+    private Set<Coordinate> calculateCornerLights() {
+        return Set.of(
+                Coordinate.builder().x(0).y(0).build(),
+                Coordinate.builder().x(gridWidth - 1).y(0).build(),
+                Coordinate.builder().x(0).y(gridHeight - 1).build(),
+                Coordinate.builder().x(gridWidth - 1).y(gridHeight - 1).build()
+        );
     }
 
     private boolean hasMoreToAnimate() {
@@ -62,13 +92,17 @@ public record Lights(
     }
 
     private boolean isSwitchedOnAfterAnimating(Coordinate coordinate) {
+        boolean isStuckOn = stuckOn.contains(coordinate);
+
         boolean isAlreadySwitchedOn = switchedOn.contains(coordinate);
 
         long numberOfNeighboursOn = coordinate.neighbors().stream()
                 .filter(switchedOn::contains)
                 .count();
 
-        return numberOfNeighboursOn == 3 || (isAlreadySwitchedOn && numberOfNeighboursOn == 2);
+        return isStuckOn
+                || numberOfNeighboursOn == 3
+                || (isAlreadySwitchedOn && numberOfNeighboursOn == 2);
     }
 
     public int countSwitchedOn() {

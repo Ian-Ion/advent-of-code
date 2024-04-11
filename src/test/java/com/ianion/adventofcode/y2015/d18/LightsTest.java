@@ -44,6 +44,24 @@ class LightsTest {
         assertThat(result).isEqualTo(expectedNumberOfLightsSwitchedOn);
     }
 
+    @ParameterizedTest
+    @MethodSource("animateWithCornerLightsStuckOnTestArgs")
+    void testAnimateWithCornerLightsStuckOn(
+            List<String> input,
+            int gridWidth,
+            int gridHeight,
+            int numberOfAnimationFrames,
+            int expectedNumberOfLightsSwitchedOn
+    ) {
+        Set<Coordinate> initiallySwitchedOn = parseAsSwitchedOnCoordinates(input);
+
+        int result = Lights.initialize(initiallySwitchedOn, gridWidth, gridHeight)
+                .animateWithCornerLightsStuckOn(numberOfAnimationFrames)
+                .countSwitchedOn();
+
+        assertThat(result).isEqualTo(expectedNumberOfLightsSwitchedOn);
+    }
+
     private static Stream<Arguments> animateTestArgs() {
         return Stream.of(
                 Arguments.of(TEST_INPUT, 6, 6, 1, 11),
@@ -53,6 +71,19 @@ class LightsTest {
                 Arguments.of(
                         FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d18/input.txt"),
                         100, 100, 100, 1061)
+        );
+    }
+
+    private static Stream<Arguments> animateWithCornerLightsStuckOnTestArgs() {
+        return Stream.of(
+                Arguments.of(TEST_INPUT, 6, 6, 1, 18),
+                Arguments.of(TEST_INPUT, 6, 6, 2, 18),
+                Arguments.of(TEST_INPUT, 6, 6, 3, 18),
+                Arguments.of(TEST_INPUT, 6, 6, 4, 14),
+                Arguments.of(TEST_INPUT, 6, 6, 5, 17),
+                Arguments.of(
+                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d18/input.txt"),
+                        100, 100, 100, 1006)
         );
     }
 
