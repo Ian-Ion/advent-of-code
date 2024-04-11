@@ -52,7 +52,7 @@ class LightsTest {
                 Arguments.of(TEST_INPUT, 6, 6, 4, 4),
                 Arguments.of(
                         FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d18/input.txt"),
-                        100, 100, 100, 0)
+                        100, 100, 100, 1061)
         );
     }
 
