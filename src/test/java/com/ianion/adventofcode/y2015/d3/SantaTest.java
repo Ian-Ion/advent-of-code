@@ -11,14 +11,14 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class HouseVisitorTest {
+class SantaTest {
 
     @ParameterizedTest
     @MethodSource("countUniqueHousesVisitedTestArgs")
     void testCountUniqueHousesVisited(String input, int expectedOutput) {
-        List<HouseVisitor.Direction> directions = parseAsDirectionsList(input);
+        List<Direction> directions = parseAsDirectionsList(input);
 
-        int result = HouseVisitor.countUniqueHousesVisited(directions);
+        int result = Santa.countUniqueHousesVisited(directions);
 
         assertThat(result).isEqualTo(expectedOutput);
     }
@@ -26,9 +26,9 @@ class HouseVisitorTest {
     @ParameterizedTest
     @MethodSource("countUniqueHousesVisitedByTwoSantasTestArgs")
     void testCountUniqueHousesVisitedByTwoSantas(String input, int expectedOutput) {
-        List<HouseVisitor.Direction> directions = parseAsDirectionsList(input);
+        List<Direction> directions = parseAsDirectionsList(input);
 
-        int result = HouseVisitor.countUniqueHousesVisitedByTwoSantas(directions);
+        int result = Santa.countUniqueHousesVisitedByTwoSantas(directions);
 
         assertThat(result).isEqualTo(expectedOutput);
     }
@@ -51,14 +51,14 @@ class HouseVisitorTest {
         );
     }
 
-    private static List<HouseVisitor.Direction> parseAsDirectionsList(String input) {
+    private static List<Direction> parseAsDirectionsList(String input) {
         return input.chars()
                 .mapToObj(i -> toDirection((char) i))
                 .toList();
     }
 
-    public static HouseVisitor.Direction toDirection(char character) {
-        return Arrays.stream(HouseVisitor.Direction.values()).filter(d -> d.character == character).findFirst()
+    public static Direction toDirection(char character) {
+        return Arrays.stream(Direction.values()).filter(d -> d.character == character).findFirst()
                 .orElseThrow(() -> new RuntimeException("Could not decode Direction from character " + character));
     }
 }

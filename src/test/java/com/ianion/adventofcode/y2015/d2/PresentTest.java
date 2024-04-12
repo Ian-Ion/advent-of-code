@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PresentWrapperTest {
+class PresentTest {
 
     @ParameterizedTest
     @MethodSource("calculatePaperRequiredTestArgs")
@@ -51,7 +51,7 @@ class PresentWrapperTest {
     private static List<PresentWrapper.Present> parseAsPresentsList(List<String> input) {
         return input.stream()
                 .map(line -> line.split("x"))
-                .map(PresentWrapperTest::toPresent)
+                .map(PresentTest::toPresent)
                 .toList();
     }
 

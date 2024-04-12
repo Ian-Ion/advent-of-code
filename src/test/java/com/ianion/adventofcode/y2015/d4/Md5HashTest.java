@@ -9,12 +9,12 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class Md5HashSolverTest {
+class Md5HashTest {
 
     @ParameterizedTest
     @MethodSource("findLowestSaltProducingHashStartingWithFiveZeroesTestArgs")
     void testFindLowestSaltProducingHashStartingWithFiveZeroes(String input, int expectedOutput) {
-        int result = Md5HashSolver.findLowestSaltProducingHashStartingWith(input, "00000");
+        int result = Md5Hash.findLowestSaltProducingHashStartingWith(input, "00000");
 
         assertThat(result).isEqualTo(expectedOutput);
     }
@@ -22,7 +22,7 @@ class Md5HashSolverTest {
     @ParameterizedTest
     @MethodSource("findLowestSaltProducingHashStartingWithSixZeroesTestArgs")
     void testFindLowestSaltProducingHashStartingWithSixZeroes(String input, int expectedOutput) {
-        int result = Md5HashSolver.findLowestSaltProducingHashStartingWith(input, "000000");
+        int result = Md5Hash.findLowestSaltProducingHashStartingWith(input, "000000");
 
         assertThat(result).isEqualTo(expectedOutput);
     }
