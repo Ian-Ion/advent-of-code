@@ -55,7 +55,7 @@ public record Refridgerator(
     }
 
     private Refridgerator prepareToStore(int litresToStore) {
-        return Refridgerator.builder()
+        return this.toBuilder()
                 .litresToStore(litresToStore)
                 .build();
     }
@@ -83,14 +83,14 @@ public record Refridgerator(
                 .build();
     }
 
-    private Set<Container> removeFromEmptyContainers(Container emptyContainer) {
+    private Set<Container> removeFromEmptyContainers(Container container) {
         return emptyContainers.stream()
-                .filter(c -> !c.equals(emptyContainer))
+                .filter(c -> !c.equals(container))
                 .collect(Collectors.toSet());
     }
 
-    private Set<Container> addToFilledContainers(Container emptyContainer) {
-        return Stream.concat(filledContainers.stream(), Stream.of(emptyContainer))
+    private Set<Container> addToFilledContainers(Container container) {
+        return Stream.concat(filledContainers.stream(), Stream.of(container))
                 .collect(Collectors.toSet());
     }
 
