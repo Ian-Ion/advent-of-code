@@ -15,9 +15,9 @@ class PresentTest {
     @ParameterizedTest
     @MethodSource("calculatePaperRequiredTestArgs")
     void testCalculatePaperRequired(List<String> input, int expectedOutput) {
-        List<PresentWrapper.Present> presents = parseAsPresentsList(input);
+        List<Present> presents = parseAsPresentsList(input);
 
-        int result = PresentWrapper.calculatePaperRequired(presents);
+        int result = Present.calculatePaperRequired(presents);
 
         assertThat(result).isEqualTo(expectedOutput);
     }
@@ -25,9 +25,9 @@ class PresentTest {
     @ParameterizedTest
     @MethodSource("calculateRibbonRequiredTestArgs")
     void testCalculateRibbonRequired(List<String> input, int expectedOutput) {
-        List<PresentWrapper.Present> presents = parseAsPresentsList(input);
+        List<Present> presents = parseAsPresentsList(input);
 
-        int result = PresentWrapper.calculateRibbonRequired(presents);
+        int result = Present.calculateRibbonRequired(presents);
 
         assertThat(result).isEqualTo(expectedOutput);
     }
@@ -48,15 +48,15 @@ class PresentTest {
         );
     }
 
-    private static List<PresentWrapper.Present> parseAsPresentsList(List<String> input) {
+    private static List<Present> parseAsPresentsList(List<String> input) {
         return input.stream()
                 .map(line -> line.split("x"))
                 .map(PresentTest::toPresent)
                 .toList();
     }
 
-    private static PresentWrapper.Present toPresent(String[] dimensions) {
-        return PresentWrapper.Present.builder()
+    private static Present toPresent(String[] dimensions) {
+        return Present.builder()
                 .length(Integer.parseInt(dimensions[0]))
                 .width(Integer.parseInt(dimensions[1]))
                 .height(Integer.parseInt(dimensions[2]))

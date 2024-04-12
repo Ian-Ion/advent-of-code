@@ -50,7 +50,7 @@ class CircuitCalculatorTest {
     void testAssembleAndRun() {
         List<LogicGate> gates = parseAsGatesList(TEST_INPUT);
 
-        CircuitCalculator.Circuit result = CircuitCalculator.assembleAndRun(gates);
+        Circuit result = Circuit.assembleAndRun(gates);
 
         TEST_EXPECTED_OUTPUT.forEach(
                 (key, value) -> assertThat(result.getSignal(Wire.from(key))).isEqualTo(value));
@@ -60,7 +60,7 @@ class CircuitCalculatorTest {
     void testAssembleAndRunChallengePart1() {
         List<LogicGate> gates = readChallengeInput();
 
-        CircuitCalculator.Circuit result = CircuitCalculator.assembleAndRun(gates);
+        Circuit result = Circuit.assembleAndRun(gates);
 
         assertThat(result.getSignal(WIRE_A)).isEqualTo(956);
     }
@@ -69,9 +69,9 @@ class CircuitCalculatorTest {
     void testAssembleAndRunChallengePart2() {
         List<LogicGate> gates = readChallengeInput();
 
-        CircuitCalculator.Circuit firstPass = CircuitCalculator
+        Circuit firstPass = Circuit
                 .assembleAndRun(gates);
-        CircuitCalculator.Circuit secondPass = CircuitCalculator
+        Circuit secondPass = Circuit
                 .assembleAndRun(overrideWireBInputWithWireAOutput(gates, firstPass));
 
         assertThat(secondPass.getSignal(WIRE_A)).isEqualTo(40149);
@@ -175,7 +175,7 @@ class CircuitCalculatorTest {
                 .build();
     }
 
-    private static List<LogicGate> overrideWireBInputWithWireAOutput(List<LogicGate> gates, CircuitCalculator.Circuit firstPass) {
+    private static List<LogicGate> overrideWireBInputWithWireAOutput(List<LogicGate> gates, Circuit firstPass) {
         return Stream
                 .concat(
                         gates.stream().filter(gate -> !gate.getOutput().equals(WIRE_B)),
