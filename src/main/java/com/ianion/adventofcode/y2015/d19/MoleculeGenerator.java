@@ -1,13 +1,11 @@
 package com.ianion.adventofcode.y2015.d19;
 
 import lombok.Builder;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 @Builder(toBuilder = true)
 public record MoleculeGenerator(
         Replacement replacement,
@@ -16,7 +14,20 @@ public record MoleculeGenerator(
         Set<String> spawnedMolecules
 ) {
 
-    public static MoleculeGenerator initialize(Replacement replacement, String molecule) {
+    public static Set<String> spawnMolecules(Replacement replacement, String molecule) {
+        MoleculeGenerator generator = MoleculeGenerator.initialize(replacement, molecule);
+
+        return Stream
+                .iterate(
+                        generator,
+                        MoleculeGenerator::hasNext,
+                        MoleculeGenerator::next)
+                .reduce(generator, (first, second) -> second)
+                .next()
+                .spawnedMolecules();
+    }
+
+    private static MoleculeGenerator initialize(Replacement replacement, String molecule) {
         return MoleculeGenerator.builder()
                 .replacement(replacement)
                 .originalMolecule(molecule)
@@ -25,7 +36,7 @@ public record MoleculeGenerator(
                 .build();
     }
 
-    public MoleculeGenerator next() {
+    private MoleculeGenerator next() {
         int index = originalMolecule.indexOf(replacement.from(), currentIndex);
         return index == -1 ? this : spawnNext(index);
     }
@@ -46,7 +57,7 @@ public record MoleculeGenerator(
                 .build();
     }
 
-    public boolean hasNext() {
+    private boolean hasNext() {
         return originalMolecule.indexOf(replacement.from(), currentIndex) != -1;
     }
 }

@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Builder
@@ -22,23 +21,15 @@ public record RudolphMedicineMachine(
 
     public int calibrate(String molecule) {
         return replacements.stream()
-                .map(replacement -> spawnMolecules(replacement, molecule))
+                .map(replacement -> MoleculeGenerator.spawnMolecules(replacement, molecule))
                 .flatMap(Set::stream)
                 .collect(Collectors.toSet())
                 .size();
     }
 
-    private Set<String> spawnMolecules(Replacement replacement, String molecule) {
-        MoleculeGenerator generator = MoleculeGenerator.initialize(replacement, molecule);
-
-        return Stream
-                .iterate(
-                        generator,
-                        MoleculeGenerator::hasNext,
-                        MoleculeGenerator::next)
-                .reduce(generator, (first, second) -> second)
-                .next()
-                .spawnedMolecules();
+    public int fabricate(String molecule) {
+        return MoleculeFabricatorV2.fabricate(replacements, molecule)
+                .numberOfSteps();
     }
 
 }

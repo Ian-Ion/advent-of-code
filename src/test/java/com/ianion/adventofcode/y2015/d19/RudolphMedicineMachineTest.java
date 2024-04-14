@@ -17,6 +17,8 @@ class RudolphMedicineMachineTest {
     private static final Pattern REPLACEMENT = Pattern.compile("(\\w+) => (\\w+)");
 
     private static final List<String> TEST_REPLACEMENTS = List.of(
+            "e => H",
+            "e => O",
             "H => HO",
             "H => OH",
             "O => HH");
@@ -28,6 +30,17 @@ class RudolphMedicineMachineTest {
 
         int result = RudolphMedicineMachine.initialize(replacements)
                 .calibrate(molecule);
+
+        assertThat(result).isEqualTo(expectedDistinctMolecules);
+    }
+
+    @ParameterizedTest
+    @MethodSource("fabricateTestArgs")
+    void testFabricate(List<String> replacementsString, String molecule, int expectedDistinctMolecules) {
+        List<Replacement> replacements = parseAsReplacements(replacementsString);
+
+        int result = RudolphMedicineMachine.initialize(replacements)
+                .fabricate(molecule);
 
         assertThat(result).isEqualTo(expectedDistinctMolecules);
     }
@@ -56,6 +69,17 @@ class RudolphMedicineMachineTest {
                         FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d19/replacements.txt"),
                         FileLoader.readFileAsString("src/test/resources/inputs/y2015/d19/molecule.txt"),
                         535)
+        );
+    }
+
+    private static Stream<Arguments> fabricateTestArgs() {
+        return Stream.of(
+                Arguments.of(TEST_REPLACEMENTS, "HOH", 3),
+                Arguments.of(TEST_REPLACEMENTS, "HOHOHO", 6),
+                Arguments.of(
+                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d19/replacements.txt"),
+                        FileLoader.readFileAsString("src/test/resources/inputs/y2015/d19/molecule.txt"),
+                        212)
         );
     }
 }
