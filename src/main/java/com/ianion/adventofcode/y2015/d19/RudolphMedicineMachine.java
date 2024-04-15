@@ -28,7 +28,7 @@ public record RudolphMedicineMachine(
     }
 
     public int fabricate(String molecule) {
-        return MoleculeFabricatorV2.fabricate(replacements, molecule)
+        return MoleculeFabricator.fabricate(replacements, molecule)
                 .numberOfSteps();
     }
 
