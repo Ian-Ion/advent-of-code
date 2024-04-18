@@ -13,24 +13,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ElfTest {
 
     @ParameterizedTest
-    @MethodSource("calculateNumberOfPresentsDeliveredToHouseTestArgs")
-    void testCalculateNumberOfPresentsDeliveredToHouse(int houseNumber, int expectedNumberOfPresents) {
-        int numberOfPresents = Elf.calculateNumberOfPresentsDeliveredToHouse(houseNumber);
+    @MethodSource("calculateNumberOfPresentsDeliveredToHouseV1TestArgs")
+    void testCalculateNumberOfPresentsDeliveredToHouseV1(int houseNumber, int expectedNumberOfPresents) {
+        int numberOfPresents = Elf.calculateNumberOfPresentsDeliveredToHouseV1(houseNumber);
 
         assertThat(numberOfPresents).isEqualTo(expectedNumberOfPresents);
     }
 
     @Test
-    void testCalculateLowestHouseNumberToReceive() {
+    void testCalculateLowestHouseNumberToReceiveV1() {
         int numberOfPresents = Integer.parseInt(
                 FileLoader.readFileAsString("src/test/resources/inputs/y2015/d20/input.txt"));
 
-        int houseNumber = Elf.calculateLowestHouseNumberToReceive(numberOfPresents);
+        int houseNumber = Elf.calculateLowestHouseNumberToReceiveV1(numberOfPresents);
 
         assertThat(houseNumber).isEqualTo(831600);
     }
 
-    private static Stream<Arguments> calculateNumberOfPresentsDeliveredToHouseTestArgs() {
+    @Test
+    void testCalculateLowestHouseNumberToReceiveV2() {
+        int numberOfPresents = Integer.parseInt(
+                FileLoader.readFileAsString("src/test/resources/inputs/y2015/d20/input.txt"));
+
+        int houseNumber = Elf.calculateLowestHouseNumberToReceiveV2(numberOfPresents);
+
+        assertThat(houseNumber).isEqualTo(884520);
+    }
+
+    private static Stream<Arguments> calculateNumberOfPresentsDeliveredToHouseV1TestArgs() {
         return Stream.of(
                 Arguments.of(1, 10),
                 Arguments.of(2, 30),
