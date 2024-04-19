@@ -28,6 +28,14 @@ public record Player(
                 .orElseThrow(() -> new RuntimeException("No equipment combination that can defeat the boss"));
     }
 
+    public static Player findHighestCostEquipmentToLoseAgainst(Boss boss) {
+        return Player.initialize()
+                .generatePlayersWithAllLegalEquipmentPermutations().stream()
+                .filter(player -> !Fight.between(player, boss).playerWins())
+                .reduce(BinaryOperator.maxBy(BY_COST))
+                .orElseThrow(() -> new RuntimeException("No equipment combination that can defeat the boss"));
+    }
+
     private static Player initialize() {
         return Player.builder()
                 .hp(PLAYER_HP)

@@ -25,6 +25,16 @@ class PlayerTest {
         assertThat(player.getEquipmentCost()).isEqualTo(91);
     }
 
+    @Test
+    void testFindHighestCostEquipmentToLoseAgainst() {
+        Boss boss = readAsBoss(
+                FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d21/input.txt"));
+
+        Player player = Player.findHighestCostEquipmentToLoseAgainst(boss);
+
+        assertThat(player.getEquipmentCost()).isEqualTo(158);
+    }
+
     private Boss readAsBoss(List<String> input) {
         Matcher hitPointsMatcher = HIT_POINTS.matcher(input.get(0));
         Matcher damageMatcher = DAMAGE.matcher(input.get(1));
