@@ -16,7 +16,7 @@ class PlayerTest {
     private static final Pattern ARMOR = Pattern.compile("Armor: (\\d+)");
 
     @Test
-    void testCalculateNumberOfPresentsDeliveredToHouseV1() {
+    void testFindLowestCostEquipmentToWinAgainst() {
         Boss boss = readAsBoss(
                 FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d21/input.txt"));
 
