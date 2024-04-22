@@ -33,11 +33,11 @@ public record Fight(
 
     private Fight nextRound() {
         return turn.equals(Turn.PLAYER)
-                ? attackBoss()
-                : attackPlayer();
+                ? playerAttacksBoss()
+                : bossAttacksPlayer();
     }
 
-    private Fight attackBoss() {
+    private Fight playerAttacksBoss() {
         int damageAmount = player.calculateDamageCausedTo(boss);
         return this.toBuilder()
                 .boss(boss.deductHp(damageAmount))
@@ -45,7 +45,7 @@ public record Fight(
                 .build();
     }
 
-    private Fight attackPlayer() {
+    private Fight bossAttacksPlayer() {
         int damageAmount = boss.calculateDamageCausedTo(player);
         return this.toBuilder()
                 .player(player.deductHp(damageAmount))

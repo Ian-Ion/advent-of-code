@@ -40,7 +40,7 @@ public record Fight(
 
     private Fight playRemainingRoundsOptimally() {
         return turn.equals(Competitor.BOSS)
-                ? castNextSpellOptimallyAfterPlayingRound(List.of(attackPlayer()))
+                ? castNextSpellOptimallyAfterPlayingRound(List.of(bossAttacksPlayer()))
                 : castNextSpellOptimallyAfterPlayingRound(generateVariantsFromLegalSpells());
     }
 
@@ -113,7 +113,7 @@ public record Fight(
                 .build();
     }
 
-    private Fight attackPlayer() {
+    private Fight bossAttacksPlayer() {
         int damageAmount = boss.calculateDamageCausedTo(player);
         Wizard updatedPlayer = player.deductHp(damageAmount);
 
