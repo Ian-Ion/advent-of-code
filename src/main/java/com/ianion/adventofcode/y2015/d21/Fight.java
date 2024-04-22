@@ -6,36 +6,50 @@ import java.util.stream.Stream;
 
 @Builder(toBuilder = true)
 public record Fight(
-        Participant attacker,
-        Participant defender
+        Turn turn,
+        Warrior player,
+        Boss boss
 ) {
 
-    public static Fight between(Player player, Boss boss) {
-        return Fight.builder().attacker(player).defender(boss).build();
+    public static Fight between(Warrior player, Boss boss) {
+        return Fight.builder().turn(Turn.PLAYER).player(player).boss(boss).build();
     }
 
     public boolean playerWins() {
-        Fight result = Stream.iterate(this, Fight::doParticipantsStillHaveHp, Fight::nextRound)
+        Fight result = Stream.iterate(this, Fight::doFightersStillHaveHp, Fight::nextRound)
                 .reduce(this, (first, second) -> second)
                 .nextRound();
 
-        return result.getWinner() instanceof Player;
+        return result.getWinner() instanceof Warrior;
     }
 
-    private Participant getWinner() {
-        return attacker.hp() > 0 ? attacker : defender;
+    private Fighter getWinner() {
+        return player.hp() > 0 ? player : boss;
     }
 
-    private boolean doParticipantsStillHaveHp() {
-        return attacker.hp() > 0 && defender.hp() > 0;
+    private boolean doFightersStillHaveHp() {
+        return player.hp() > 0 && boss.hp() > 0;
     }
 
     private Fight nextRound() {
-        int damageAmount = attacker.calculateDamageCausedTo(defender);
+        return turn.equals(Turn.PLAYER)
+                ? attackBoss()
+                : attackPlayer();
+    }
 
+    private Fight attackBoss() {
+        int damageAmount = player.calculateDamageCausedTo(boss);
         return this.toBuilder()
-                .attacker(defender.sufferDamage(damageAmount))
-                .defender(attacker)
+                .boss(boss.deductHp(damageAmount))
+                .turn(Turn.BOSS)
+                .build();
+    }
+
+    private Fight attackPlayer() {
+        int damageAmount = boss.calculateDamageCausedTo(player);
+        return this.toBuilder()
+                .player(player.deductHp(damageAmount))
+                .turn(Turn.PLAYER)
                 .build();
     }
 }

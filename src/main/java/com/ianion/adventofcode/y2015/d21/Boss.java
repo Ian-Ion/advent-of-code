@@ -6,8 +6,9 @@ import lombok.Builder;
 public record Boss(
         int hp,
         int damage,
-        int armor
-) implements Participant {
+        int armor,
+        int poisonDuration
+) implements Fighter {
 
     @Override
     public int getDamageScore() {
@@ -20,7 +21,7 @@ public record Boss(
     }
 
     @Override
-    public Participant sufferDamage(int amount) {
+    public Boss deductHp(int amount) {
         return this.toBuilder().hp(hp - amount).build();
     }
 }

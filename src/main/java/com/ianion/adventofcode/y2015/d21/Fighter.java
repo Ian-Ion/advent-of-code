@@ -1,6 +1,6 @@
 package com.ianion.adventofcode.y2015.d21;
 
-public interface Participant {
+public interface Fighter {
 
     int hp();
 
@@ -8,9 +8,9 @@ public interface Participant {
 
     int getArmorScore();
 
-    Participant sufferDamage(int amount);
+    Fighter deductHp(int amount);
 
-    default int calculateDamageCausedTo(Participant opponent) {
+    default int calculateDamageCausedTo(Fighter opponent) {
         return Math.max(1, this.getDamageScore() - opponent.getArmorScore());
     }
 }

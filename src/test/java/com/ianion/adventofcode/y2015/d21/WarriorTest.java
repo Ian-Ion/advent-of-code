@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PlayerTest {
+class WarriorTest {
 
     private static final Pattern HIT_POINTS = Pattern.compile("Hit Points: (\\d+)");
     private static final Pattern DAMAGE = Pattern.compile("Damage: (\\d+)");
@@ -20,9 +20,9 @@ class PlayerTest {
         Boss boss = readAsBoss(
                 FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d21/input.txt"));
 
-        Player player = Player.findLowestCostEquipmentToWinAgainst(boss);
+        Warrior warrior = Warrior.findLowestCostEquipmentToWinAgainst(boss);
 
-        assertThat(player.getEquipmentCost()).isEqualTo(91);
+        assertThat(warrior.getEquipmentCost()).isEqualTo(91);
     }
 
     @Test
@@ -30,9 +30,9 @@ class PlayerTest {
         Boss boss = readAsBoss(
                 FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d21/input.txt"));
 
-        Player player = Player.findHighestCostEquipmentToLoseAgainst(boss);
+        Warrior warrior = Warrior.findHighestCostEquipmentToLoseAgainst(boss);
 
-        assertThat(player.getEquipmentCost()).isEqualTo(158);
+        assertThat(warrior.getEquipmentCost()).isEqualTo(158);
     }
 
     private Boss readAsBoss(List<String> input) {

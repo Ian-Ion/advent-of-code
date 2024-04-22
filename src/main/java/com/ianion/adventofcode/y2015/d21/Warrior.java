@@ -11,56 +11,56 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Builder(toBuilder = true)
-public record Player(
+public record Warrior(
         int hp,
         Set<Equipment> equipment
-) implements Participant {
+) implements Fighter {
 
     private static int PLAYER_HP = 100;
 
-    private static final Comparator<Player> BY_COST = Comparator.comparing(Player::getEquipmentCost);
+    private static final Comparator<Warrior> BY_COST = Comparator.comparing(Warrior::getEquipmentCost);
 
-    public static Player findLowestCostEquipmentToWinAgainst(Boss boss) {
-        return Player.initialize()
+    public static Warrior findLowestCostEquipmentToWinAgainst(Boss boss) {
+        return Warrior.initialize()
                 .generatePlayersWithAllLegalEquipmentPermutations().stream()
-                .filter(player -> Fight.between(player, boss).playerWins())
+                .filter(warrior -> Fight.between(warrior, boss).playerWins())
                 .reduce(BinaryOperator.minBy(BY_COST))
                 .orElseThrow(() -> new RuntimeException("No equipment combination that can defeat the boss"));
     }
 
-    public static Player findHighestCostEquipmentToLoseAgainst(Boss boss) {
-        return Player.initialize()
+    public static Warrior findHighestCostEquipmentToLoseAgainst(Boss boss) {
+        return Warrior.initialize()
                 .generatePlayersWithAllLegalEquipmentPermutations().stream()
-                .filter(player -> !Fight.between(player, boss).playerWins())
+                .filter(warrior -> !Fight.between(warrior, boss).playerWins())
                 .reduce(BinaryOperator.maxBy(BY_COST))
                 .orElseThrow(() -> new RuntimeException("No equipment combination that can defeat the boss"));
     }
 
-    private static Player initialize() {
-        return Player.builder()
+    private static Warrior initialize() {
+        return Warrior.builder()
                 .hp(PLAYER_HP)
                 .equipment(Set.of())
                 .build();
     }
 
-    private List<Player> generatePlayersWithAllLegalEquipmentPermutations() {
+    private List<Warrior> generatePlayersWithAllLegalEquipmentPermutations() {
         return equipEveryPossibleWeapon()
-                .map(Player::equipNothingOrEveryPossibleArmor)
+                .map(Warrior::equipNothingOrEveryPossibleArmor)
                 .flatMap(Stream::distinct)
-                .map(Player::equipNothingOrEveryPossibleRing)
+                .map(Warrior::equipNothingOrEveryPossibleRing)
                 .flatMap(Stream::distinct)
-                .map(Player::equipNothingOrEveryPossibleRing)
+                .map(Warrior::equipNothingOrEveryPossibleRing)
                 .flatMap(Stream::distinct)
                 .toList();
     }
 
-    private Stream<Player> equipEveryPossibleWeapon() {
+    private Stream<Warrior> equipEveryPossibleWeapon() {
         return Arrays.stream(Weapon.values())
                 .map(weapon -> this.toBuilder().equipment(
                         Stream.concat(equipment.stream(), Stream.of(weapon)).collect(Collectors.toSet())).build());
     }
 
-    private Stream<Player> equipNothingOrEveryPossibleArmor() {
+    private Stream<Warrior> equipNothingOrEveryPossibleArmor() {
         return Stream.concat(
                 Stream.of(this),
                 Arrays.stream(Armor.values())
@@ -68,7 +68,7 @@ public record Player(
                                 Stream.concat(equipment.stream(), Stream.of(armor)).collect(Collectors.toSet())).build()));
     }
 
-    private Stream<Player> equipNothingOrEveryPossibleRing() {
+    private Stream<Warrior> equipNothingOrEveryPossibleRing() {
         return Stream.concat(
                 Stream.of(this),
                 Arrays.stream(Ring.values())
@@ -93,7 +93,7 @@ public record Player(
     }
 
     @Override
-    public Participant sufferDamage(int amount) {
+    public Warrior deductHp(int amount) {
         return this.toBuilder().hp(hp - amount).build();
     }
 
