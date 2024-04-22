@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CircuitCalculatorTest {
+class CircuitTest {
 
     private static final Pattern INPUT_GATE = Pattern.compile("(\\d+) -> (\\w+)");
     private static final Pattern PIPE_GATE = Pattern.compile("(\\w+) -> (\\w+)");
