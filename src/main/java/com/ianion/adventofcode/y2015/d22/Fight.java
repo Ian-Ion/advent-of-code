@@ -16,6 +16,7 @@ public record Fight(
 ) {
 
     private static final Comparator<Fight> BY_MANA_SPENT = Comparator.comparing(Fight::getTotalManaSpent);
+    private static final int MAX_CASTS_BEFORE_GIVING_UP = 10;
 
     public int getTotalManaSpent() {
         return player.getTotalManaSpent();
@@ -88,7 +89,7 @@ public record Fight(
     }
 
     private List<Spell> calculateLegalSpells() {
-        if (player.spellsCast().size() > 10) {
+        if (player.spellsCast().size() > MAX_CASTS_BEFORE_GIVING_UP) {
             return List.of();
         }
         return Arrays.stream(Spell.values()).filter(this::canCast)
