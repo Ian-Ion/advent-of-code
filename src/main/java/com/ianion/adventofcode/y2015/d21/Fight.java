@@ -6,13 +6,13 @@ import java.util.stream.Stream;
 
 @Builder(toBuilder = true)
 public record Fight(
-        Turn turn,
+        Competitor turn,
         Warrior player,
         Boss boss
 ) {
 
     public static Fight between(Warrior player, Boss boss) {
-        return Fight.builder().turn(Turn.PLAYER).player(player).boss(boss).build();
+        return Fight.builder().turn(Competitor.PLAYER).player(player).boss(boss).build();
     }
 
     public boolean playerWins() {
@@ -32,7 +32,7 @@ public record Fight(
     }
 
     private Fight nextRound() {
-        return turn.equals(Turn.PLAYER)
+        return turn.equals(Competitor.PLAYER)
                 ? playerAttacksBoss()
                 : bossAttacksPlayer();
     }
@@ -41,7 +41,7 @@ public record Fight(
         int damageAmount = player.calculateDamageCausedTo(boss);
         return this.toBuilder()
                 .boss(boss.deductHp(damageAmount))
-                .turn(Turn.BOSS)
+                .turn(Competitor.BOSS)
                 .build();
     }
 
@@ -49,7 +49,7 @@ public record Fight(
         int damageAmount = boss.calculateDamageCausedTo(player);
         return this.toBuilder()
                 .player(player.deductHp(damageAmount))
-                .turn(Turn.PLAYER)
+                .turn(Competitor.PLAYER)
                 .build();
     }
 }
