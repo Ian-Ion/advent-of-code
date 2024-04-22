@@ -15,14 +15,23 @@ class FightTest {
     private static final Pattern DAMAGE = Pattern.compile("Damage: (\\d+)");
 
     @Test
-    void testApplyEffectsAndPlayRemainingRoundsOptimallyIfFightNotOver() {
+    void testPlayOptimallyIfFightNotOver() {
         Boss boss = readAsBoss(
                 FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d22/input.txt"));
 
-        Fight fight = Fight.between(Wizard.initialize(), boss)
-                .applyEffectsAndPlayRemainingRoundsOptimallyIfFightNotOver();
+        Fight fight = Fight.between(Wizard.initialize(), boss, Mode.NORMAL).playOptimallyIfFightNotOver();
 
         assertThat(fight.getTotalManaSpent()).isEqualTo(900);
+    }
+
+    @Test
+    void testPlayOptimallyIfFightNotOver_hardMode() {
+        Boss boss = readAsBoss(
+                FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d22/input.txt"));
+
+        Fight fight = Fight.between(Wizard.initialize(), boss, Mode.HARD).playOptimallyIfFightNotOver();
+
+        assertThat(fight.getTotalManaSpent()).isEqualTo(1216);
     }
 
     private Boss readAsBoss(List<String> input) {

@@ -12,7 +12,8 @@ public record Fight(
         Competitor turn,
         Wizard player,
         Boss boss,
-        Competitor winner
+        Competitor winner,
+        Mode mode
 ) {
 
     private static final Comparator<Fight> BY_MANA_SPENT = Comparator.comparing(Fight::getTotalManaSpent);
@@ -22,11 +23,22 @@ public record Fight(
         return player.getTotalManaSpent();
     }
 
-    public static Fight between(Wizard player, Boss boss) {
-        return Fight.builder().turn(Competitor.PLAYER).player(player).boss(boss).build();
+    public static Fight between(Wizard player, Boss boss, Mode mode) {
+        return Fight.builder()
+                .turn(Competitor.PLAYER)
+                .player(player)
+                .boss(boss)
+                .mode(mode)
+                .build();
     }
 
-    public Fight applyEffectsAndPlayRemainingRoundsOptimallyIfFightNotOver() {
+    public Fight playOptimallyIfFightNotOver() {
+        return isOver()
+                ? this
+                : applyHardModePenalty().applyEffectsAndPlayRemainingRoundsOptimallyIfFightNotOver();
+    }
+
+    private Fight applyEffectsAndPlayRemainingRoundsOptimallyIfFightNotOver() {
         return isOver()
                 ? this
                 : applyEffects().playRemainingRoundsOptimallyIfFightNotOver();
@@ -46,7 +58,7 @@ public record Fight(
 
     private Fight castNextSpellOptimallyAfterPlayingRound(List<Fight> variants) {
         return variants.stream()
-                .map(Fight::applyEffectsAndPlayRemainingRoundsOptimallyIfFightNotOver)
+                .map(Fight::playOptimallyIfFightNotOver)
                 .filter(Fight::playerWon)
                 .reduce(BinaryOperator.minBy(BY_MANA_SPENT))
                 .orElse(this);
@@ -60,23 +72,24 @@ public record Fight(
         return winner != null && winner.equals(Competitor.PLAYER);
     }
 
-    private Fight applyEffects() {
-        return decreaseShieldTimer()
-                .rechargeMana()
-                .poisonBoss();
-    }
-
-    private Fight decreaseShieldTimer() {
-        return this.toBuilder().player(player.decreaseShield()).build();
-    }
-
-    private Fight rechargeMana() {
-        return this.toBuilder().player(player.rechargeMana()).build();
-    }
-
-    private Fight poisonBoss() {
+    private Fight applyHardModePenalty() {
+        Wizard updatedPlayer = turn.equals(Competitor.PLAYER) && mode.equals(Mode.HARD)
+                ? player.deductHp(1)
+                : player;
+        
         return this.toBuilder()
-                .boss(boss.applyPoison())
+                .player(updatedPlayer)
+                .winner(updatedPlayer.hp() <= 0 ? Competitor.BOSS : null)
+                .build();
+    }
+
+    private Fight applyEffects() {
+        Boss updatedBoss = boss.applyPoison();
+
+        return this.toBuilder()
+                .player(player.decreaseShield().rechargeMana())
+                .boss(updatedBoss)
+                .winner(updatedBoss.hp() <= 0 ? Competitor.PLAYER : null)
                 .build();
     }
 
@@ -92,14 +105,14 @@ public record Fight(
         if (player.spellsCast().size() > MAX_CASTS_BEFORE_GIVING_UP) {
             return List.of();
         }
-        return Arrays.stream(Spell.values()).filter(this::canCast)
+        return Arrays.stream(Spell.values()).filter(this::canAfford)
                 .filter(spell -> !spell.equals(Spell.POISON) || !boss.isPoisoned())
                 .filter(spell -> !spell.equals(Spell.RECHARGE) || !player.isRecharging())
                 .filter(spell -> !spell.equals(Spell.SHIELD) || !player.hasShield())
                 .toList();
     }
 
-    private boolean canCast(Spell spell) {
+    private boolean canAfford(Spell spell) {
         return player.canAffordToCast(spell);
     }
 
