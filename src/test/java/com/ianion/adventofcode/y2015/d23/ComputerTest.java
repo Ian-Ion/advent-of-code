@@ -27,9 +27,14 @@ class ComputerTest {
 
     @ParameterizedTest
     @MethodSource("runProgramTestArgs")
-    void testRunProgram(List<String> instructions, int expectedRegisterAValue, int expectedRegisterBValue) {
+    void testRunProgram(
+            Set<Register> startingRegisters,
+            List<String> instructions,
+            int expectedRegisterAValue,
+            int expectedRegisterBValue
+    ) {
         Program program = parseAsProgram(instructions);
-        Computer result = Computer.runProgram(Set.of(REGISTER_A, REGISTER_B), program);
+        Computer result = Computer.runProgram(startingRegisters, program);
 
         assertThat(result.getRegisterValue(REGISTER_A.name())).isEqualTo(expectedRegisterAValue);
         assertThat(result.getRegisterValue(REGISTER_B.name())).isEqualTo(expectedRegisterBValue);
@@ -94,6 +99,7 @@ class ComputerTest {
     private static Stream<Arguments> runProgramTestArgs() {
         return Stream.of(
                 Arguments.of(
+                        Set.of(REGISTER_A, REGISTER_B),
                         List.of(
                                 "inc a",
                                 "jio a, +2",
@@ -101,8 +107,13 @@ class ComputerTest {
                                 "inc a"),
                         2, 0),
                 Arguments.of(
+                        Set.of(REGISTER_A, REGISTER_B),
                         FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d23/input.txt"),
-                        1, 184)
+                        1, 184),
+                Arguments.of(
+                        Set.of(REGISTER_A.toBuilder().value(1).build(), REGISTER_B),
+                        FileLoader.readFileAsStringList("src/test/resources/inputs/y2015/d23/input.txt"),
+                        1, 231)
         );
     }
 }
